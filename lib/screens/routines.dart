@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:workout_tracker/models/routine_exercise_model.dart';
 import 'package:workout_tracker/models/routine_model.dart';
 import 'package:workout_tracker/models/screen_model.dart';
 import 'package:workout_tracker/screens/modify_routine.dart';
@@ -57,7 +58,11 @@ class Routines extends StatefulWidget implements ScreenModel {
                           UniqueKey().hashCode,
                           _titleTextController.text,
                           null,
-                          null,
+                          RoutineExerciseModel(
+                            UniqueKey().hashCode,
+                            _titleTextController.text,
+                            null,
+                          ),
                         );
 
                         Iterable? data = [];
@@ -143,6 +148,8 @@ class _RoutinesState extends State<Routines> {
   }
 
   void _initFileData() async {
+    //FileService.routines().deleteFile();
+
     Iterable? data = [];
 
     //Leggo il contenuto del file e lo assegno ad un oggetto Iterable perché é una lista
@@ -201,7 +208,7 @@ class _RoutinesState extends State<Routines> {
                           data.id,
                           data.name,
                           data.hexIconColor,
-                          data.exercises,
+                          data.routineExerciseModel,
                         ),
                       ),
                     ),
