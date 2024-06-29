@@ -19,8 +19,6 @@ class ModifyRoutine extends StatefulWidget {
 }
 
 class _ModifyRoutineState extends State<ModifyRoutine> {
-  final List<RoutineModel> _selected = [];
-  late bool _selectionEnabled = true;
   late RoutineExerciseModel routineExerciseModel =
       RoutineExerciseModel(null, null, null);
 
@@ -55,24 +53,6 @@ class _ModifyRoutineState extends State<ModifyRoutine> {
             .routineExerciseModel!;
       }
     });
-  }
-
-  void toggleItemSelection(var data) {
-    if (_selected.contains(data)) {
-      setState(() {
-        _selected.remove(data);
-      });
-    } else {
-      setState(() {
-        _selected.add(data);
-      });
-    }
-
-    if (_selected.isNotEmpty) {
-      _selectionEnabled = false;
-    } else {
-      _selectionEnabled = true;
-    }
   }
 
   @override
