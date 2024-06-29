@@ -58,33 +58,15 @@ class _ModifyRoutineState extends State<ModifyRoutine> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(
+          routineExerciseModel.name != null
+              ? routineExerciseModel.name!
+              : "Routine",
+        ),
+      ),
       body: Column(
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              radius: 23,
-              backgroundColor: Provider.of<ThemeProvider>(context)
-                  .themeData
-                  .colorScheme
-                  .tertiaryContainer,
-              child: const Icon(
-                Icons.add_rounded,
-              ),
-            ),
-            title: Title(
-              title: "Add Exercises",
-              color: Provider.of<ThemeProvider>(context)
-                  .themeData
-                  .colorScheme
-                  .onSecondary,
-              child: const Text("Add Exercises"),
-            ),
-            onTap: () {
-              developer.log("cliccato!!!");
-            },
-          ),
-        ],
+        children: [],
       ),
     );
   }

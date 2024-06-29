@@ -2,15 +2,17 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:workout_tracker/models/routine_exercise_model.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_tracker/models/routine_model.dart';
 import 'package:workout_tracker/models/screen_model.dart';
 import 'package:workout_tracker/screens/modify_routine.dart';
+import 'package:workout_tracker/widgets/routines_floating_action_button.dart';
 
 import '../services/file_service.dart';
+import '../theme/theme_provider.dart';
 
 class Routines extends StatefulWidget implements ScreenModel {
-  Routines({super.key, required this.context});
+  const Routines({super.key, required this.context});
 
   @override
   State<Routines> createState() => _RoutinesState();
@@ -18,110 +20,8 @@ class Routines extends StatefulWidget implements ScreenModel {
   @override
   final BuildContext context;
 
-  final _listTilePadding =
-      const EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10);
-
-  final _titleTextController = TextEditingController();
-
   @override
-  late final Widget floatingActionButton = FloatingActionButton(
-    child: const Icon(Icons.add),
-    onPressed: () {
-      showModalBottomSheet<void>(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(30),
-              ),
-            ),
-            height: 500,
-            child: GestureDetector(
-              child: Scaffold(
-                appBar: AppBar(
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  actions: [
-                    IconButton(
-                      onPressed: () async {
-                        //TODO aggiungere logica per salvare routine
-                        developer.log(_titleTextController.text);
-
-                        RoutineModel routine = RoutineModel(
-                          UniqueKey().hashCode,
-                          _titleTextController.text,
-                          null,
-                          RoutineExerciseModel(
-                            UniqueKey().hashCode,
-                            _titleTextController.text,
-                            null,
-                          ),
-                        );
-
-                        Iterable? data = [];
-
-                        //Per pulire vecchio file
-                        //FileService.routines().deleteFile();
-
-                        //Leggo il contenuto del file e lo assegno ad un oggetto Iterable perché é una lista
-                        await FileService.routines()
-                            .readFile()
-                            .then((fileContent) {
-                          fileContent ?? (fileContent = "[]");
-                          data = jsonDecode(fileContent);
-                        });
-
-                        //Parso la lista con il modello che mi interessa
-                        List<RoutineModel> routines = List<RoutineModel>.from(
-                            data!.map((model) => RoutineModel.fromJson(model)));
-
-                        //Creo una nuova routine
-                        routines.add(routine);
-                        FileService.routines().writeFile(jsonEncode(routines));
-                        developer.log("Routine salvata!!!");
-                      },
-                      icon: const Icon(Icons.check_rounded),
-                    )
-                  ],
-                ),
-                body: TextField(
-                  maxLines: 2,
-                  minLines: 1,
-                  clipBehavior: Clip.antiAlias,
-                  autofocus: false,
-                  controller: _titleTextController,
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: "ie. core workout",
-                    label: const Text("Routine Name"),
-                    labelStyle: const TextStyle(
-                      fontSize: 18,
-                    ),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding: _listTilePadding,
-                    border: InputBorder.none,
-                    prefixIcon: const Icon(Icons.info_outline_rounded),
-                  ),
-                ),
-              ),
-              onTap: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-            ),
-          );
-        },
-      );
-    },
-  );
+  final Widget floatingActionButton = const RoutinesFloatingActionButton();
 
   @override
   set context(BuildContext context) {
@@ -157,6 +57,8 @@ class _RoutinesState extends State<Routines> {
       fileContent ?? (fileContent = "[]");
       data = jsonDecode(fileContent);
     });
+
+    developer.log(data.toString());
 
     setState(() {
       //Parso la lista con il modello che mi interessa
@@ -221,6 +123,12 @@ class _RoutinesState extends State<Routines> {
                 leading: _selected.contains(data)
                     ? CircleAvatar(
                         radius: 23,
+                        backgroundColor: data.hexIconColor != null
+                            ? Color(data.hexIconColor!)
+                            : Provider.of<ThemeProvider>(context)
+                                .themeData
+                                .colorScheme
+                                .secondaryContainer,
                         child: IconButton(
                           iconSize: 30,
                           icon: const Icon(Icons.done_rounded),
@@ -231,6 +139,12 @@ class _RoutinesState extends State<Routines> {
                       )
                     : CircleAvatar(
                         radius: 23,
+                        backgroundColor: data.hexIconColor != null
+                            ? Color(data.hexIconColor!)
+                            : Provider.of<ThemeProvider>(context)
+                                .themeData
+                                .colorScheme
+                                .primaryContainer,
                         child: IconButton(
                           iconSize: 30,
                           icon: const Icon(Icons.assignment_outlined),
