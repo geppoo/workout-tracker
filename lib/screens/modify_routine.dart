@@ -197,7 +197,7 @@ class _ModifyRoutineState extends State<ModifyRoutine> {
                                                       const Padding(
                                                         padding:
                                                             EdgeInsets.only(
-                                                                right: 15),
+                                                                right: 25),
                                                       ),
                                                       CircleAvatar(
                                                         backgroundColor: Provider
@@ -209,6 +209,16 @@ class _ModifyRoutineState extends State<ModifyRoutine> {
                                                         child: IconButton(
                                                           onPressed: () {
                                                             //TODO implementare modifica numero ripetizioni
+                                                            if (routineExercise
+                                                                    .exerciseSeries!
+                                                                    .length >
+                                                                1) {
+                                                              updateState(() {
+                                                                routineExercise
+                                                                    .exerciseSeries
+                                                                    ?.removeLast();
+                                                              });
+                                                            }
                                                           },
                                                           icon: const Icon(
                                                             Icons
@@ -231,6 +241,26 @@ class _ModifyRoutineState extends State<ModifyRoutine> {
                                                         child: IconButton(
                                                           onPressed: () {
                                                             //TODO implementare modifica numero ripetizioni
+
+                                                            var exerciseCopy =
+                                                                routineExercise
+                                                                    .exerciseSeries
+                                                                    ?.last;
+
+                                                            updateState(() {
+                                                              routineExercise
+                                                                  .exerciseSeries
+                                                                  ?.add(
+                                                                ExerciseSerieModel(
+                                                                  exerciseCopy
+                                                                      ?.weight,
+                                                                  exerciseCopy
+                                                                      ?.repetitions,
+                                                                  exerciseCopy
+                                                                      ?.restSeconds,
+                                                                ),
+                                                              );
+                                                            });
                                                           },
                                                           icon: const Icon(
                                                             Icons.add_rounded,
