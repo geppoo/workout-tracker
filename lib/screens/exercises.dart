@@ -104,8 +104,6 @@ class _ExercisesState extends State<Exercises> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 selected: _selected.contains(data),
-                selectedTileColor: Colors.transparent,
-                selectedColor: Colors.transparent,
                 onTap: () {
                   // Open modify_exercise screen for selected exercise
                   Navigator.of(context)
@@ -164,15 +162,11 @@ class _ExercisesState extends State<Exercises> {
                 ),
                 dense: true,
                 visualDensity: const VisualDensity(vertical: -1),
-                subtitle: Offstage(
-                  offstage: data.mainMuscleGroups != null,
-                  child: Text(
-                    data.mainMuscleGroups == null
-                        ? "-"
-                        : FormatList.formatMuscleGroupList(
-                            data.mainMuscleGroups),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                subtitle: Text(
+                  data.mainMuscleGroups == null
+                      ? "-"
+                      : FormatList.formatMuscleGroupList(data.mainMuscleGroups),
+                  overflow: TextOverflow.ellipsis,
                 ),
               );
             },

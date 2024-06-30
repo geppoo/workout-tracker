@@ -9,8 +9,7 @@ part of 'routine_exercise_model.dart';
 RoutineExerciseModel _$RoutineExerciseModelFromJson(
         Map<String, dynamic> json) =>
     RoutineExerciseModel(
-      (json['id'] as num?)?.toInt(),
-      json['name'] as String?,
+      (json['exerciseId'] as num?)?.toInt(),
       (json['exerciseSeries'] as List<dynamic>?)
           ?.map((e) => ExerciseSerieModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -19,14 +18,12 @@ RoutineExerciseModel _$RoutineExerciseModelFromJson(
 Map<String, dynamic> _$RoutineExerciseModelToJson(
         RoutineExerciseModel instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
+      'exerciseId': instance.exerciseId,
       'exerciseSeries': instance.exerciseSeries,
     };
 
 ExerciseSerieModel _$ExerciseSerieModelFromJson(Map<String, dynamic> json) =>
     ExerciseSerieModel(
-      ExerciseModel.fromJson(json['exercise'] as Map<String, dynamic>),
       (json['weight'] as num?)?.toDouble(),
       (json['repetitions'] as num?)?.toInt(),
       (json['restSeconds'] as num?)?.toInt(),
@@ -34,7 +31,6 @@ ExerciseSerieModel _$ExerciseSerieModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ExerciseSerieModelToJson(ExerciseSerieModel instance) =>
     <String, dynamic>{
-      'exercise': instance.exercise,
       'weight': instance.weight,
       'repetitions': instance.repetitions,
       'restSeconds': instance.restSeconds,

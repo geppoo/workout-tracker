@@ -1,17 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:workout_tracker/models/exercise_model.dart';
 
 part 'routine_exercise_model.g.dart';
 
 @JsonSerializable()
 class RoutineExerciseModel {
-  int? id;
-  String? name;
+  int? exerciseId;
   List<ExerciseSerieModel>? exerciseSeries;
 
   RoutineExerciseModel(
-    this.id,
-    this.name,
+    this.exerciseId,
     this.exerciseSeries,
   );
 
@@ -22,19 +19,17 @@ class RoutineExerciseModel {
 
   @override
   String toString() {
-    return "{Id: $id, Name: $name, Exercises: $exerciseSeries";
+    return "{Exercise Id: $exerciseId, Exercises: $exerciseSeries";
   }
 }
 
 @JsonSerializable()
 class ExerciseSerieModel {
-  ExerciseModel exercise;
   double? weight;
   int? repetitions;
   int? restSeconds;
 
   ExerciseSerieModel(
-    this.exercise,
     this.weight,
     this.repetitions,
     this.restSeconds,
@@ -47,6 +42,6 @@ class ExerciseSerieModel {
 
   @override
   String toString() {
-    return "{Exercise: $exercise, Weight: $weight, Repetitions: $repetitions, Rest Seconds: $restSeconds";
+    return "{Weight: $weight, Repetitions: $repetitions, Rest Seconds: $restSeconds";
   }
 }

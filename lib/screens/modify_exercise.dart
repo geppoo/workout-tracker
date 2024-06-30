@@ -342,8 +342,6 @@ class _ModifyExerciseState extends State<ModifyExercise> {
                                 horizontal: 10, vertical: 6),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
-                            selectedTileColor: Colors.transparent,
-                            selectedColor: Colors.transparent,
                             onTap: () {
                               //Return ExerciseType value
                               developer.log(data);
@@ -441,7 +439,6 @@ class _ModifyExerciseState extends State<ModifyExercise> {
                                       horizontal: 10),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12)),
-                                  selectedTileColor: Colors.transparent,
                                   title: Text(
                                     data,
                                     maxLines: 2,
@@ -533,7 +530,6 @@ class _ModifyExerciseState extends State<ModifyExercise> {
                                       horizontal: 10),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12)),
-                                  selectedTileColor: Colors.transparent,
                                   title: Text(
                                     data,
                                     maxLines: 2,
@@ -627,7 +623,6 @@ class _ModifyExerciseState extends State<ModifyExercise> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  selectedTileColor: Colors.transparent,
                                   title: Text(
                                     data,
                                     maxLines: 2,

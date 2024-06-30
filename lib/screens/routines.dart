@@ -58,8 +58,6 @@ class _RoutinesState extends State<Routines> {
       data = jsonDecode(fileContent);
     });
 
-    developer.log(data.toString());
-
     setState(() {
       //Parso la lista con il modello che mi interessa
       routines = List<RoutineModel>.from(
@@ -98,8 +96,6 @@ class _RoutinesState extends State<Routines> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 selected: _selected.contains(data),
-                selectedTileColor: Colors.transparent,
-                selectedColor: Colors.transparent,
                 onTap: () {
                   // Open modify_exercise screen for selected exercise
                   Navigator.of(context)
@@ -110,7 +106,7 @@ class _RoutinesState extends State<Routines> {
                           data.id,
                           data.name,
                           data.hexIconColor,
-                          data.routineExerciseModel,
+                          data.routineExercises,
                         ),
                       ),
                     ),

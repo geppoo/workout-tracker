@@ -70,11 +70,7 @@ class _RoutinesFloatingActionButtonState
                                     UniqueKey().hashCode,
                                     _titleTextController.text,
                                     _selectedRoutineColor.value,
-                                    RoutineExerciseModel(
-                                      UniqueKey().hashCode,
-                                      _titleTextController.text,
-                                      null,
-                                    ),
+                                    null
                                   );
 
                                   Iterable? data = [];

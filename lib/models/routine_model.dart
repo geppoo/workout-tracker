@@ -8,13 +8,13 @@ class RoutineModel {
   int? id;
   String? name;
   int? hexIconColor;
-  RoutineExerciseModel? routineExerciseModel;
+  Set<RoutineExerciseModel>? routineExercises;
 
   RoutineModel(
     this.id,
     this.name,
     this.hexIconColor,
-    this.routineExerciseModel,
+    this.routineExercises,
   );
 
   factory RoutineModel.fromJson(Map<String, dynamic> json) =>
@@ -24,6 +24,6 @@ class RoutineModel {
 
   @override
   String toString() {
-    return "{Id: $id, Name: $name, HexIconColor: $hexIconColor, Exercises: $routineExerciseModel";
+    return "{Id: $id, Name: $name, HexIconColor: $hexIconColor, Routine Exercises: $routineExercises";
   }
 }
