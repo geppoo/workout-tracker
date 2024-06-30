@@ -94,7 +94,6 @@ class _AddRoutineExercisesState extends State<AddRoutineExercises> {
             offstage: _selected.isEmpty,
             child: IconButton(
               onPressed: () {
-                //TODO aggiungere logica per salvare gli esercizi della routine
                 //merge delle liste di esercizi in modo da avere la nuova lista completa
                 _selected.addAll(routineExercises);
 
@@ -177,7 +176,6 @@ class _AddRoutineExercisesState extends State<AddRoutineExercises> {
                     ),
                   ),
                   dense: true,
-                  visualDensity: const VisualDensity(vertical: -1),
                   subtitle: Offstage(
                     offstage: data.mainMuscleGroups != null,
                     child: Text(

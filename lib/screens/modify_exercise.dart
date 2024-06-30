@@ -367,7 +367,6 @@ class _ModifyExerciseState extends State<ModifyExercise> {
                               ),
                             ),
                             dense: true,
-                            visualDensity: const VisualDensity(vertical: -1),
                           );
                         },
                       );

@@ -159,10 +159,6 @@ class _RoutinesState extends State<Routines> {
                   ),
                 ),
                 dense: true,
-                visualDensity: const VisualDensity(vertical: -1),
-                /*subtitle: const Text("test",
-            overflow: TextOverflow.ellipsis,
-          ),*/
               );
             },
           )

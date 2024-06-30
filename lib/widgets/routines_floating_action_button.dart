@@ -64,14 +64,11 @@ class _RoutinesFloatingActionButtonState
                             actions: [
                               IconButton(
                                 onPressed: () async {
-                                  //TODO aggiungere logica per salvare colore
-
                                   RoutineModel routine = RoutineModel(
-                                    UniqueKey().hashCode,
-                                    _titleTextController.text,
-                                    _selectedRoutineColor.value,
-                                    null
-                                  );
+                                      UniqueKey().hashCode,
+                                      _titleTextController.text,
+                                      _selectedRoutineColor.value,
+                                      null);
 
                                   Iterable? data = [];
 

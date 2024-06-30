@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_tracker/models/routine_model.dart';
 import 'package:workout_tracker/screens/add_routine_exercises.dart';
-import 'package:workout_tracker/theme/theme_provider.dart';
 
 import '../models/exercise_model.dart';
 import '../models/routine_exercise_model.dart';
 import '../services/file_service.dart';
+import '../theme/theme_provider.dart';
 
 class ModifyRoutine extends StatefulWidget {
   const ModifyRoutine({super.key, required this.routine});
@@ -21,8 +21,6 @@ class ModifyRoutine extends StatefulWidget {
 }
 
 class _ModifyRoutineState extends State<ModifyRoutine> {
-  late RoutineExerciseModel routineExerciseModel =
-      RoutineExerciseModel(null, null);
   final List<ExerciseModel> _selected = [];
   late bool _selectionEnabled = true;
   List<ExerciseModel> routineExercises = [];
@@ -38,6 +36,8 @@ class _ModifyRoutineState extends State<ModifyRoutine> {
 
   void _initFileData() async {
     //FileService.routines().deleteFile();
+    exercises = [];
+    routineExercises = [];
 
     Iterable? data = [];
 
@@ -99,23 +99,165 @@ class _ModifyRoutineState extends State<ModifyRoutine> {
                   selected: _selected.contains(data),
                   onTap: () {
                     // Open modify_exercise_serie modal for selected exercise
-                    /*Navigator.of(context)
-                      .push(
-                    MaterialPageRoute(
-                      builder: (_) => ModifyRoutine(
-                        routine: RoutineModel(
-                          data.id,
-                          data.name,
-                          data.hexIconColor,
-                          data.routineExerciseModel,
-                        ),
-                      ),
-                    ),
-                  )
-                      .then((value) {
-                    _initFileData();
-                  });*/
-                    developer.log("apro modifica serie");
+                    showModalBottomSheet<void>(
+                      isScrollControlled: true,
+                      context: context,
+                      enableDrag: true,
+                      builder: (BuildContext context) {
+                        //cerco il RoutineExerciseModel della mia routine tramite esercizio
+                        RoutineExerciseModel routineExercise = widget
+                            .routine.routineExercises!
+                            .firstWhere((value) => value.exerciseId == data.id);
+
+                        return StatefulBuilder(
+                          builder:
+                              (BuildContext context, StateSetter updateState) {
+                            return Wrap(
+                              children: <Widget>[
+                                Container(
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(30),
+                                    ),
+                                  ),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.70,
+                                  child: GestureDetector(
+                                    child: Scaffold(
+                                      resizeToAvoidBottomInset: false,
+                                      appBar: AppBar(
+                                        title: Text(data.name!),
+                                        leading: IconButton(
+                                          icon: const Icon(
+                                              Icons.arrow_back_rounded),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        actions: [
+                                          IconButton(
+                                            onPressed: () async {
+                                              //TODO implementare logica per salvare RoutineExerciseModel
+                                            },
+                                            icon:
+                                                const Icon(Icons.check_rounded),
+                                          )
+                                        ],
+                                      ),
+                                      body: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  color: Provider.of<
+                                                              ThemeProvider>(
+                                                          context)
+                                                      .themeData
+                                                      .colorScheme
+                                                      .primaryContainer,
+                                                  alignment: Alignment.center,
+                                                  padding:
+                                                      const EdgeInsets.all(20),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Text(
+                                                        "Series",
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                        ),
+                                                      ),
+                                                      const Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 10),
+                                                      ),
+                                                      Text(
+                                                        "${routineExercise.exerciseSeries?.length}",
+                                                        style: const TextStyle(
+                                                          fontSize: 25,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      const Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 15),
+                                                      ),
+                                                      CircleAvatar(
+                                                        backgroundColor: Provider
+                                                                .of<ThemeProvider>(
+                                                                    context)
+                                                            .themeData
+                                                            .colorScheme
+                                                            .secondaryContainer,
+                                                        child: IconButton(
+                                                          onPressed: () {
+                                                            //TODO implementare modifica numero ripetizioni
+                                                          },
+                                                          icon: const Icon(
+                                                            Icons
+                                                                .remove_rounded,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 10),
+                                                      ),
+                                                      CircleAvatar(
+                                                        backgroundColor: Provider
+                                                                .of<ThemeProvider>(
+                                                                    context)
+                                                            .themeData
+                                                            .colorScheme
+                                                            .secondaryContainer,
+                                                        child: IconButton(
+                                                          onPressed: () {
+                                                            //TODO implementare modifica numero ripetizioni
+                                                          },
+                                                          icon: const Icon(
+                                                            Icons.add_rounded,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                    },
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    );
                   },
                   enabled: _selectionEnabled,
                   leading: _selected.contains(data)
@@ -149,7 +291,6 @@ class _ModifyRoutineState extends State<ModifyRoutine> {
                     ),
                   ),
                   dense: true,
-                  visualDensity: const VisualDensity(vertical: -1),
                   /*subtitle: const Text("test",
             overflow: TextOverflow.ellipsis,
           ),*/

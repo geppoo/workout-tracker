@@ -100,7 +100,7 @@ class _ExercisesState extends State<Exercises> {
               return ListTile(
                 minTileHeight: 70,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    const EdgeInsets.symmetric(horizontal: 10),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 selected: _selected.contains(data),
@@ -161,9 +161,8 @@ class _ExercisesState extends State<Exercises> {
                   ),
                 ),
                 dense: true,
-                visualDensity: const VisualDensity(vertical: -1),
                 subtitle: Text(
-                  data.mainMuscleGroups == null
+                  data.mainMuscleGroups == null || data.mainMuscleGroups!.isEmpty
                       ? "-"
                       : FormatList.formatMuscleGroupList(data.mainMuscleGroups),
                   overflow: TextOverflow.ellipsis,
