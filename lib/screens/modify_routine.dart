@@ -22,7 +22,7 @@ class ModifyRoutine extends StatefulWidget {
 
 class _ModifyRoutineState extends State<ModifyRoutine>
     with SingleTickerProviderStateMixin {
-  final List<ExerciseModel> _selected = [];
+  late List<ExerciseModel> _selected = [];
   late bool _selectionEnabled = true;
   List<ExerciseModel> routineExercises = [];
   List<ExerciseModel> exercises = [];
@@ -121,6 +121,32 @@ class _ModifyRoutineState extends State<ModifyRoutine>
       appBar: AppBar(
         title: Text(
             widget.routine.name != null ? widget.routine.name! : "loading..."),
+        actions: [
+          Offstage(
+            offstage: _selected.isEmpty,
+            child: IconButton(
+              icon: const Icon(Icons.delete_forever_rounded),
+              onPressed: () {
+                setState(() {
+                  for (var selectedExercise in _selected) {
+                    widget.routine.routineExercises?.removeWhere((exercise) =>
+                        exercise.exerciseId == selectedExercise.id);
+                    routineExercises.removeWhere(
+                        (exercise) => exercise.id == selectedExercise.id);
+                  }
+                  _selected = [];
+                  _selectionEnabled = true;
+                });
+
+                routines[routines.indexWhere(
+                        (routine) => routine.id == widget.routine.id)] =
+                    widget.routine;
+
+                FileService.routines().writeFile(jsonEncode(routines));
+              },
+            ),
+          )
+        ],
       ),
       body: routineExercises.isNotEmpty
           ? ListView.builder(
@@ -174,7 +200,6 @@ class _ModifyRoutineState extends State<ModifyRoutine>
                                         actions: [
                                           IconButton(
                                             onPressed: () async {
-                                              //TODO implementare logica per salvare RoutineExerciseModel
                                               routines[routines.indexWhere(
                                                       (routine) =>
                                                           routine.id ==
@@ -289,7 +314,6 @@ class _ModifyRoutineState extends State<ModifyRoutine>
                                                             .secondaryContainer,
                                                         child: IconButton(
                                                           onPressed: () {
-                                                            //TODO implementare modifica numero serie
                                                             if (routineExercise
                                                                     .exerciseSeries!
                                                                     .length >
@@ -321,8 +345,6 @@ class _ModifyRoutineState extends State<ModifyRoutine>
                                                             .secondaryContainer,
                                                         child: IconButton(
                                                           onPressed: () {
-                                                            //TODO implementare modifica numero serie
-
                                                             var exerciseCopy =
                                                                 routineExercise
                                                                     .exerciseSeries
@@ -515,8 +537,6 @@ class _ModifyRoutineState extends State<ModifyRoutine>
                                                               .secondaryContainer,
                                                           child: IconButton(
                                                             onPressed: () {
-                                                              //TODO implementare modifica numero ripetizioni
-
                                                               var repetitions =
                                                                   routineExercise
                                                                       .exerciseSeries
@@ -554,8 +574,6 @@ class _ModifyRoutineState extends State<ModifyRoutine>
                                                               .secondaryContainer,
                                                           child: IconButton(
                                                             onPressed: () {
-                                                              //TODO implementare modifica numero ripetizioni
-
                                                               var repetitions =
                                                                   routineExercise
                                                                       .exerciseSeries

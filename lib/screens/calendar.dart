@@ -11,8 +11,8 @@ class Calendar extends StatefulWidget implements ScreenModel {
   final BuildContext context;
 
   @override
-  late final Widget floatingActionButton = Visibility(
-    visible: false,
+  late final Widget floatingActionButton = Offstage(
+    offstage: true,
     child: FloatingActionButton(
       child: const Icon(Icons.add),
       onPressed: () {

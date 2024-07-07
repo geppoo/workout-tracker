@@ -94,9 +94,6 @@ class _AddRoutineExercisesState extends State<AddRoutineExercises> {
             offstage: _selected.isEmpty,
             child: IconButton(
               onPressed: () {
-                //merge delle liste di esercizi in modo da avere la nuova lista completa
-                _selected.addAll(routineExercises);
-
                 widget.routine.routineExercises ??= {};
 
                 //popolo le serie della lista e le salvo con valori di default
