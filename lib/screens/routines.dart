@@ -1,8 +1,10 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_tracker/models/routine_list_model.dart';
 import 'package:workout_tracker/models/routine_model.dart';
 import 'package:workout_tracker/models/screen_model.dart';
 import 'package:workout_tracker/screens/modify_routine.dart';
@@ -38,31 +40,11 @@ class _RoutinesState extends State<Routines> {
   final List<RoutineModel> _selected = [];
   late bool _selectionEnabled = true;
   List<RoutineModel> routines = [];
+  final RoutineListModel routineListModel = RoutineListModel();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initFileData();
-    });
-  }
-
-  void _initFileData() async {
-    //FileService.routines().deleteFile();
-
-    Iterable? data = [];
-
-    //Leggo il contenuto del file e lo assegno ad un oggetto Iterable perché é una lista
-    await FileService.routines().readFile().then((fileContent) {
-      fileContent ?? (fileContent = "[]");
-      data = jsonDecode(fileContent);
-    });
-
-    setState(() {
-      //Parso la lista con il modello che mi interessa
-      routines = List<RoutineModel>.from(
-          data!.map((model) => RoutineModel.fromJson(model)));
-    });
   }
 
   void toggleItemSelection(var data) {
@@ -85,85 +67,88 @@ class _RoutinesState extends State<Routines> {
 
   @override
   Widget build(BuildContext context) {
-    return routines.isNotEmpty
-        ? ListView.builder(
-            itemCount: routines.length, // length of listData
-            itemBuilder: (context, idx) {
-              final data = routines[idx]; // shorter variable name
-              return ListTile(
-                minTileHeight: 70,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                selected: _selected.contains(data),
-                onTap: () {
-                  // Open modify_exercise screen for selected exercise
-                  Navigator.of(context)
-                      .push(
-                    MaterialPageRoute(
-                      builder: (_) => ModifyRoutine(
-                        routine: RoutineModel(
-                          data.id,
-                          data.name,
-                          data.hexIconColor,
-                          data.routineExercises,
-                        ),
+    return Consumer<RoutineListModel>(
+      builder: (context, routineListModel, child) {
+        routines = routineListModel.routines;
+        return routines.isNotEmpty
+            ? ListView.builder(
+                itemCount: routines.length, // length of listData
+                itemBuilder: (context, idx) {
+                  final data = routines[idx]; // shorter variable name
+                  return ListTile(
+                    minTileHeight: 70,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    selected: _selected.contains(data),
+                    onTap: () {
+                      // Open modify_exercise screen for selected exercise
+                      Navigator.of(context)
+                          .push(
+                            MaterialPageRoute(
+                              builder: (_) => ModifyRoutine(
+                                routine: RoutineModel(
+                                  data.id,
+                                  data.name,
+                                  data.hexIconColor,
+                                  data.routineExercises,
+                                ),
+                              ),
+                            ),
+                          )
+                          .then((value) {});
+                    },
+                    enabled: _selectionEnabled,
+                    leading: _selected.contains(data)
+                        ? CircleAvatar(
+                            radius: 23,
+                            backgroundColor: data.hexIconColor != null
+                                ? Color(data.hexIconColor!)
+                                : Provider.of<ThemeProvider>(context)
+                                    .themeData
+                                    .colorScheme
+                                    .secondaryContainer,
+                            child: IconButton(
+                              iconSize: 30,
+                              icon: const Icon(Icons.done_rounded),
+                              onPressed: () {
+                                toggleItemSelection(data);
+                              },
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 23,
+                            backgroundColor: data.hexIconColor != null
+                                ? Color(data.hexIconColor!)
+                                : Provider.of<ThemeProvider>(context)
+                                    .themeData
+                                    .colorScheme
+                                    .primaryContainer,
+                            child: IconButton(
+                              iconSize: 30,
+                              icon: const Icon(Icons.assignment_outlined),
+                              onPressed: () {
+                                toggleItemSelection(data);
+                              },
+                            ),
+                          ),
+                    title: Text(
+                      data.name ?? "",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
-                      .then((value) {
-                    _initFileData();
-                  });
+                    dense: true,
+                  );
                 },
-                enabled: _selectionEnabled,
-                leading: _selected.contains(data)
-                    ? CircleAvatar(
-                        radius: 23,
-                        backgroundColor: data.hexIconColor != null
-                            ? Color(data.hexIconColor!)
-                            : Provider.of<ThemeProvider>(context)
-                                .themeData
-                                .colorScheme
-                                .secondaryContainer,
-                        child: IconButton(
-                          iconSize: 30,
-                          icon: const Icon(Icons.done_rounded),
-                          onPressed: () {
-                            toggleItemSelection(data);
-                          },
-                        ),
-                      )
-                    : CircleAvatar(
-                        radius: 23,
-                        backgroundColor: data.hexIconColor != null
-                            ? Color(data.hexIconColor!)
-                            : Provider.of<ThemeProvider>(context)
-                                .themeData
-                                .colorScheme
-                                .primaryContainer,
-                        child: IconButton(
-                          iconSize: 30,
-                          icon: const Icon(Icons.assignment_outlined),
-                          onPressed: () {
-                            toggleItemSelection(data);
-                          },
-                        ),
-                      ),
-                title: Text(
-                  data.name ?? "",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                dense: true,
+              )
+            : const Center(
+                child: Text("No routine found"),
               );
-            },
-          )
-        : const Center(
-            child: Text("No routine found"),
-          );
+      },
+    );
   }
 }

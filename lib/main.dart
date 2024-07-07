@@ -9,13 +9,25 @@ import 'package:workout_tracker/theme/theme_provider.dart';
 import 'package:workout_tracker/theme/themes.dart';
 import 'package:workout_tracker/widgets/bottom_navbar.dart';
 
+import 'models/routine_list_model.dart';
 import 'models/screen_model.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  //init file data
+  await RoutineListModel().init();
+
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => RoutineListModel(),
+        ),
+      ],
       child: const WorkoutTracker(),
     ),
   );
@@ -82,9 +94,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Container(
-        child: navbarScreens.elementAt(_selectedIndex),
-      ),
+      body: navbarScreens.elementAt(_selectedIndex),
       floatingActionButton:
           ((navbarScreens.elementAt(_selectedIndex)) as ScreenModel)
               .floatingActionButton,
