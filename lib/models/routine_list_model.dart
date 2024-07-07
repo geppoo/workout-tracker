@@ -36,19 +36,32 @@ class RoutineListModel extends ChangeNotifier {
         data.map((model) => RoutineModel.fromJson(model)));
   }
 
-  void add(RoutineModel item) {
+  Future<void> add(RoutineModel item) async {
     _routines.add(item);
-    notifyListeners();
+    await FileService.routines().writeFile(jsonEncode(_routines)).then((success) {
+      notifyListeners();
+    });
   }
 
-  void removeAt(int index) {
+  Future<void> setAt(int index, RoutineModel routine) async {
+    _routines[index] = routine;
+    await FileService.routines().writeFile(jsonEncode(_routines)).then((success) {
+      notifyListeners();
+    });
+  }
+
+  Future<void> removeAt(int index) async {
     _routines.removeAt(index);
-    notifyListeners();
+    await FileService.routines().writeFile(jsonEncode(_routines)).then((success) {
+      notifyListeners();
+    });
   }
 
-  void removeAll() {
+  Future<void> removeAll() async {
     _routines.clear();
-    notifyListeners();
+    await FileService.routines().writeFile(jsonEncode(_routines)).then((success) {
+      notifyListeners();
+    });
   }
 
   @override
