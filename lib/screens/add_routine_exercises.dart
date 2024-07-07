@@ -118,8 +118,6 @@ class _AddRoutineExercisesState extends State<AddRoutineExercises> {
                         (routine) => routine.id == widget.routine.id)] =
                     widget.routine;
 
-                developer.log(jsonEncode(routines));
-
                 FileService.routines().writeFile(jsonEncode(routines));
 
                 Navigator.pop(context);

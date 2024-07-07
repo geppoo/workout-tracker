@@ -26,10 +26,11 @@ class _ModifyRoutineState extends State<ModifyRoutine>
   late bool _selectionEnabled = true;
   List<ExerciseModel> routineExercises = [];
   List<ExerciseModel> exercises = [];
+  List<RoutineModel> routines = [];
   late AnimationController _controller;
   late Animation _animation;
 
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -58,16 +59,25 @@ class _ModifyRoutineState extends State<ModifyRoutine>
     exercises = [];
     routineExercises = [];
 
-    Iterable? data = [];
+    Iterable? exerciseData = [];
+    Iterable? routineData = [];
 
     //Leggo il contenuto del file e lo assegno ad un oggetto Iterable perché é una lista
     await FileService.exercises().readFile().then((fileContent) {
       fileContent ?? (fileContent = "[]");
-      data = jsonDecode(fileContent);
+      exerciseData = jsonDecode(fileContent);
+    });
+
+    await FileService.routines().readFile().then((fileContent) {
+      fileContent ?? (fileContent = "[]");
+      routineData = jsonDecode(fileContent);
     });
 
     exercises = List<ExerciseModel>.from(
-        data!.map((model) => ExerciseModel.fromJson(model)));
+        exerciseData!.map((model) => ExerciseModel.fromJson(model)));
+
+    routines = List<RoutineModel>.from(
+        routineData!.map((model) => RoutineModel.fromJson(model)));
 
     setState(() {
       //Recupero tutti gli esercizi legati alla routine
@@ -75,8 +85,6 @@ class _ModifyRoutineState extends State<ModifyRoutine>
         routineExercises.add(exercises[exercises.indexWhere(
             (exercise) => exercise.id == routineExercise.exerciseId)]);
       });
-
-      developer.log(widget.routine.toString());
     });
   }
 
@@ -167,68 +175,336 @@ class _ModifyRoutineState extends State<ModifyRoutine>
                                           IconButton(
                                             onPressed: () async {
                                               //TODO implementare logica per salvare RoutineExerciseModel
+                                              routines[routines.indexWhere(
+                                                      (routine) =>
+                                                          routine.id ==
+                                                          widget.routine.id)] =
+                                                  widget.routine;
+
+                                              FileService.routines().writeFile(
+                                                  jsonEncode(routines));
+
+                                              Navigator.pop(context);
+
+                                              var snackBar = SnackBar(
+                                                content: Text(
+                                                  'Information saved!',
+                                                  style: TextStyle(
+                                                    color: Provider.of<
+                                                                ThemeProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .themeData
+                                                        .colorScheme
+                                                        .onSecondaryContainer,
+                                                  ),
+                                                ),
+                                                showCloseIcon: true,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                backgroundColor:
+                                                    Provider.of<ThemeProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .themeData
+                                                        .colorScheme
+                                                        .secondaryContainer,
+                                                closeIconColor:
+                                                    Provider.of<ThemeProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .themeData
+                                                        .colorScheme
+                                                        .onSecondaryContainer,
+                                              );
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
                                             },
                                             icon:
                                                 const Icon(Icons.check_rounded),
                                           )
                                         ],
                                       ),
-                                      body: Container(
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    color: Provider.of<
-                                                                ThemeProvider>(
-                                                            context)
-                                                        .themeData
-                                                        .colorScheme
-                                                        .primaryContainer,
-                                                    alignment: Alignment.center,
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            20),
+                                      body: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  color: Provider.of<
+                                                              ThemeProvider>(
+                                                          context)
+                                                      .themeData
+                                                      .colorScheme
+                                                      .primaryContainer,
+                                                  alignment: Alignment.center,
+                                                  padding:
+                                                      const EdgeInsets.all(20),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Text(
+                                                        "Series",
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                        ),
+                                                      ),
+                                                      const Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 10),
+                                                      ),
+                                                      Text(
+                                                        "${routineExercise.exerciseSeries?.length}",
+                                                        style: const TextStyle(
+                                                          fontSize: 25,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      const Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 25),
+                                                      ),
+                                                      CircleAvatar(
+                                                        backgroundColor: Provider
+                                                                .of<ThemeProvider>(
+                                                                    context)
+                                                            .themeData
+                                                            .colorScheme
+                                                            .secondaryContainer,
+                                                        child: IconButton(
+                                                          onPressed: () {
+                                                            //TODO implementare modifica numero serie
+                                                            if (routineExercise
+                                                                    .exerciseSeries!
+                                                                    .length >
+                                                                1) {
+                                                              updateState(() {
+                                                                routineExercise
+                                                                    .exerciseSeries
+                                                                    ?.removeLast();
+                                                              });
+                                                            }
+                                                          },
+                                                          icon: const Icon(
+                                                            Icons
+                                                                .remove_rounded,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 10),
+                                                      ),
+                                                      CircleAvatar(
+                                                        backgroundColor: Provider
+                                                                .of<ThemeProvider>(
+                                                                    context)
+                                                            .themeData
+                                                            .colorScheme
+                                                            .secondaryContainer,
+                                                        child: IconButton(
+                                                          onPressed: () {
+                                                            //TODO implementare modifica numero serie
+
+                                                            var exerciseCopy =
+                                                                routineExercise
+                                                                    .exerciseSeries
+                                                                    ?.last;
+
+                                                            updateState(() {
+                                                              routineExercise
+                                                                  .exerciseSeries
+                                                                  ?.add(
+                                                                ExerciseSerieModel(
+                                                                  exerciseCopy
+                                                                      ?.weight,
+                                                                  exerciseCopy
+                                                                      ?.repetitions,
+                                                                  exerciseCopy
+                                                                      ?.restSeconds,
+                                                                ),
+                                                              );
+                                                            });
+                                                          },
+                                                          icon: const Icon(
+                                                            Icons.add_rounded,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: 20,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: ListView.builder(
+                                              itemCount: routineExercise
+                                                          .exerciseSeries !=
+                                                      null
+                                                  ? routineExercise
+                                                      .exerciseSeries?.length
+                                                  : 0,
+                                              itemBuilder: (context, idx) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    bottom: 15,
+                                                  ),
+                                                  child: IntrinsicHeight(
                                                     child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
                                                               .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
                                                       children: [
-                                                        const Text(
-                                                          "Series",
-                                                          style: TextStyle(
-                                                            fontSize: 20,
-                                                          ),
-                                                        ),
-                                                        const Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  right: 10),
-                                                        ),
                                                         Text(
-                                                          "${routineExercise.exerciseSeries?.length}",
+                                                          "$idx°",
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 25,
                                                             fontWeight:
-                                                                FontWeight.bold,
+                                                                FontWeight.w300,
                                                           ),
                                                         ),
                                                         const Padding(
                                                           padding:
                                                               EdgeInsets.only(
-                                                                  right: 25),
+                                                            right: 20,
+                                                          ),
+                                                        ),
+                                                        Flexible(
+                                                          child: SizedBox(
+                                                            width: 50,
+                                                            child: TextField(
+                                                              controller:
+                                                                  TextEditingController(
+                                                                text: routineExercise
+                                                                            .exerciseSeries !=
+                                                                        null
+                                                                    ? "${routineExercise.exerciseSeries?.elementAt(idx).weight}"
+                                                                    : "placeholder",
+                                                              ),
+                                                              onSubmitted:
+                                                                  (value) {
+                                                                updateState(() {
+                                                                  routineExercise
+                                                                          .exerciseSeries
+                                                                          ?.elementAt(
+                                                                              idx)
+                                                                          .weight =
+                                                                      double.parse(
+                                                                          value);
+                                                                });
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 15,
+                                                          child: Text(
+                                                            "kg",
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                            right: 15,
+                                                          ),
+                                                        ),
+                                                        Flexible(
+                                                          child: SizedBox(
+                                                            width: 50,
+                                                            child: TextField(
+                                                              controller:
+                                                                  TextEditingController(
+                                                                text: routineExercise
+                                                                            .exerciseSeries !=
+                                                                        null
+                                                                    ? "${routineExercise.exerciseSeries?.elementAt(idx).restSeconds}"
+                                                                    : "placeholder",
+                                                              ),
+                                                              onSubmitted:
+                                                                  (value) {
+                                                                updateState(() {
+                                                                  routineExercise
+                                                                          .exerciseSeries
+                                                                          ?.elementAt(
+                                                                              idx)
+                                                                          .restSeconds =
+                                                                      int.parse(
+                                                                          value);
+                                                                });
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                          child: Text(
+                                                            "s",
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                            right: 25,
+                                                          ),
+                                                        ),
+                                                        ConstrainedBox(
+                                                          constraints:
+                                                              const BoxConstraints(
+                                                            minWidth: 35,
+                                                          ),
+                                                          child: Text(
+                                                            routineExercise
+                                                                        .exerciseSeries !=
+                                                                    null
+                                                                ? "${routineExercise.exerciseSeries?.elementAt(idx).repetitions}x"
+                                                                : "placeholder",
+                                                            style:
+                                                                const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                            right: 20,
+                                                          ),
                                                         ),
                                                         CircleAvatar(
                                                           backgroundColor: Provider
@@ -239,17 +515,24 @@ class _ModifyRoutineState extends State<ModifyRoutine>
                                                               .secondaryContainer,
                                                           child: IconButton(
                                                             onPressed: () {
-                                                              //TODO implementare modifica numero serie
-                                                              if (routineExercise
-                                                                      .exerciseSeries!
-                                                                      .length >
-                                                                  1) {
-                                                                updateState(() {
+                                                              //TODO implementare modifica numero ripetizioni
+
+                                                              var repetitions =
                                                                   routineExercise
                                                                       .exerciseSeries
-                                                                      ?.removeLast();
-                                                                });
-                                                              }
+                                                                      ?.elementAt(
+                                                                          idx)
+                                                                      .repetitions;
+
+                                                              updateState(() {
+                                                                routineExercise
+                                                                        .exerciseSeries
+                                                                        ?.elementAt(
+                                                                            idx)
+                                                                        .repetitions =
+                                                                    (repetitions! -
+                                                                        1);
+                                                              });
                                                             },
                                                             icon: const Icon(
                                                               Icons
@@ -271,26 +554,23 @@ class _ModifyRoutineState extends State<ModifyRoutine>
                                                               .secondaryContainer,
                                                           child: IconButton(
                                                             onPressed: () {
-                                                              //TODO implementare modifica numero serie
+                                                              //TODO implementare modifica numero ripetizioni
 
-                                                              var exerciseCopy =
+                                                              var repetitions =
                                                                   routineExercise
                                                                       .exerciseSeries
-                                                                      ?.last;
+                                                                      ?.elementAt(
+                                                                          idx)
+                                                                      .repetitions;
 
                                                               updateState(() {
                                                                 routineExercise
-                                                                    .exerciseSeries
-                                                                    ?.add(
-                                                                  ExerciseSerieModel(
-                                                                    exerciseCopy
-                                                                        ?.weight,
-                                                                    exerciseCopy
-                                                                        ?.repetitions,
-                                                                    exerciseCopy
-                                                                        ?.restSeconds,
-                                                                  ),
-                                                                );
+                                                                        .exerciseSeries
+                                                                        ?.elementAt(
+                                                                            idx)
+                                                                        .repetitions =
+                                                                    (repetitions! +
+                                                                        1);
                                                               });
                                                             },
                                                             icon: const Icon(
@@ -301,242 +581,11 @@ class _ModifyRoutineState extends State<ModifyRoutine>
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+                                                );
+                                              },
                                             ),
-                                            const Padding(
-                                              padding: EdgeInsets.only(
-                                                bottom: 20,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: ListView.builder(
-                                                itemCount: routineExercise
-                                                            .exerciseSeries !=
-                                                        null
-                                                    ? routineExercise
-                                                        .exerciseSeries?.length
-                                                    : 0,
-                                                itemBuilder: (context, idx) {
-                                                  return Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      bottom: 15,
-                                                    ),
-                                                    child: IntrinsicHeight(
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Text(
-                                                            "$idx°",
-                                                            style:
-                                                                const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w300,
-                                                            ),
-                                                          ),
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                              right: 20,
-                                                            ),
-                                                          ),
-                                                          Flexible(
-                                                            child: SizedBox(
-                                                              width: 50,
-                                                              child: TextField(
-                                                                controller:
-                                                                    TextEditingController(
-                                                                  text: routineExercise
-                                                                              .exerciseSeries !=
-                                                                          null
-                                                                      ? "${routineExercise.exerciseSeries?.elementAt(idx).weight}"
-                                                                      : "placeholder",
-                                                                ),
-                                                                onSubmitted:
-                                                                    (value) {
-                                                                  updateState(
-                                                                      () {
-                                                                    routineExercise
-                                                                        .exerciseSeries
-                                                                        ?.elementAt(
-                                                                            idx)
-                                                                        .weight = double.parse(value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 15,
-                                                            child: Text(
-                                                              "kg",
-                                                              style: TextStyle(
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                              right: 15,
-                                                            ),
-                                                          ),
-                                                          Flexible(
-                                                            child: SizedBox(
-                                                              width: 50,
-                                                              child: TextField(
-                                                                controller:
-                                                                    TextEditingController(
-                                                                  text: routineExercise
-                                                                              .exerciseSeries !=
-                                                                          null
-                                                                      ? "${routineExercise.exerciseSeries?.elementAt(idx).restSeconds}"
-                                                                      : "placeholder",
-                                                                ),
-                                                                onSubmitted:
-                                                                    (value) {
-                                                                  updateState(
-                                                                      () {
-                                                                    routineExercise
-                                                                        .exerciseSeries
-                                                                        ?.elementAt(
-                                                                            idx)
-                                                                        .restSeconds = int.parse(value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 5,
-                                                            child: Text(
-                                                              "s",
-                                                              style: TextStyle(
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                              right: 25,
-                                                            ),
-                                                          ),
-                                                          ConstrainedBox(
-                                                            constraints:
-                                                                const BoxConstraints(
-                                                              minWidth: 35,
-                                                            ),
-                                                            child: Text(
-                                                              routineExercise
-                                                                          .exerciseSeries !=
-                                                                      null
-                                                                  ? "${routineExercise.exerciseSeries?.elementAt(idx).repetitions}x"
-                                                                  : "placeholder",
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 20,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                              right: 20,
-                                                            ),
-                                                          ),
-                                                          CircleAvatar(
-                                                            backgroundColor: Provider
-                                                                    .of<ThemeProvider>(
-                                                                        context)
-                                                                .themeData
-                                                                .colorScheme
-                                                                .secondaryContainer,
-                                                            child: IconButton(
-                                                              onPressed: () {
-                                                                //TODO implementare modifica numero ripetizioni
-
-                                                                var repetitions =
-                                                                    routineExercise
-                                                                        .exerciseSeries
-                                                                        ?.elementAt(
-                                                                            idx)
-                                                                        .repetitions;
-
-                                                                updateState(() {
-                                                                  routineExercise
-                                                                          .exerciseSeries
-                                                                          ?.elementAt(
-                                                                              idx)
-                                                                          .repetitions =
-                                                                      (repetitions! -
-                                                                          1);
-                                                                });
-                                                              },
-                                                              icon: const Icon(
-                                                                Icons
-                                                                    .remove_rounded,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    right: 10),
-                                                          ),
-                                                          CircleAvatar(
-                                                            backgroundColor: Provider
-                                                                    .of<ThemeProvider>(
-                                                                        context)
-                                                                .themeData
-                                                                .colorScheme
-                                                                .secondaryContainer,
-                                                            child: IconButton(
-                                                              onPressed: () {
-                                                                //TODO implementare modifica numero ripetizioni
-
-                                                                var repetitions =
-                                                                    routineExercise
-                                                                        .exerciseSeries
-                                                                        ?.elementAt(
-                                                                            idx)
-                                                                        .repetitions;
-
-                                                                updateState(() {
-                                                                  routineExercise
-                                                                          .exerciseSeries
-                                                                          ?.elementAt(
-                                                                              idx)
-                                                                          .repetitions =
-                                                                      (repetitions! +
-                                                                          1);
-                                                                });
-                                                              },
-                                                              icon: const Icon(
-                                                                Icons
-                                                                    .add_rounded,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     onTap: () {
