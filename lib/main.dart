@@ -9,6 +9,7 @@ import 'package:workout_tracker/theme/theme_provider.dart';
 import 'package:workout_tracker/theme/themes.dart';
 import 'package:workout_tracker/widgets/bottom_navbar.dart';
 
+import 'models/exercise_list_model.dart';
 import 'models/routine_list_model.dart';
 import 'models/screen_model.dart';
 
@@ -17,6 +18,7 @@ Future<void> main() async {
 
   //init file data
   await RoutineListModel().init();
+  await ExerciseListModel().init();
 
   runApp(
     MultiProvider(
@@ -26,6 +28,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => RoutineListModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ExerciseListModel(),
         ),
       ],
       child: const WorkoutTracker(),

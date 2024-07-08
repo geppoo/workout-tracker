@@ -1,5 +1,3 @@
-import 'dart:collection';
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
@@ -10,7 +8,6 @@ import 'package:workout_tracker/models/screen_model.dart';
 import 'package:workout_tracker/screens/modify_routine.dart';
 import 'package:workout_tracker/widgets/routines_floating_action_button.dart';
 
-import '../services/file_service.dart';
 import '../theme/theme_provider.dart';
 
 class Routines extends StatefulWidget implements ScreenModel {
@@ -39,8 +36,6 @@ class Routines extends StatefulWidget implements ScreenModel {
 class _RoutinesState extends State<Routines> {
   final List<RoutineModel> _selected = [];
   late bool _selectionEnabled = true;
-  List<RoutineModel> routines = [];
-  final RoutineListModel routineListModel = RoutineListModel();
 
   @override
   void initState() {
@@ -69,12 +64,13 @@ class _RoutinesState extends State<Routines> {
   Widget build(BuildContext context) {
     return Consumer<RoutineListModel>(
       builder: (context, routineListModel, child) {
-        routines = routineListModel.routines;
-        return routines.isNotEmpty
+        return routineListModel.routines.isNotEmpty
             ? ListView.builder(
-                itemCount: routines.length, // length of listData
+                itemCount:
+                    routineListModel.routines.length, // length of listData
                 itemBuilder: (context, idx) {
-                  final data = routines[idx]; // shorter variable name
+                  final data =
+                      routineListModel.routines[idx]; // shorter variable name
                   return ListTile(
                     minTileHeight: 70,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 10),

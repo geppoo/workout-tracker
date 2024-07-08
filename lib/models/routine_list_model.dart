@@ -36,8 +36,8 @@ class RoutineListModel extends ChangeNotifier {
         data.map((model) => RoutineModel.fromJson(model)));
   }
 
-  Future<void> add(RoutineModel item) async {
-    _routines.add(item);
+  Future<void> add(RoutineModel routine) async {
+    _routines.add(routine);
     await FileService.routines().writeFile(jsonEncode(_routines)).then((success) {
       notifyListeners();
     });

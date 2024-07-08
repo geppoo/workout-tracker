@@ -3,12 +3,12 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_tracker/models/exercise_list_model.dart';
 import 'package:workout_tracker/models/routine_exercise_model.dart';
 import 'package:workout_tracker/models/routine_model.dart';
 
 import '../models/exercise_model.dart';
 import '../models/routine_list_model.dart';
-import '../services/file_service.dart';
 import '../utils/format_list.dart';
 
 class AddRoutineExercises extends StatefulWidget {
@@ -22,40 +22,6 @@ class AddRoutineExercises extends StatefulWidget {
 
 class _AddRoutineExercisesState extends State<AddRoutineExercises> {
   final List<ExerciseModel> _selected = [];
-  List<ExerciseModel> exercises = [];
-  List<ExerciseModel> routineExercises = [];
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initFileData();
-    });
-  }
-
-  void _initFileData() async {
-    Iterable? exerciseData = [];
-
-    await FileService.exercises().readFile().then((fileContent) {
-      fileContent ?? (fileContent = "[]");
-      exerciseData = jsonDecode(fileContent);
-    });
-
-    setState(() {
-      exercises = List<ExerciseModel>.from(
-          exerciseData!.map((model) => ExerciseModel.fromJson(model)));
-
-      //Recupero tutti gli esercizi legati alla routine
-      widget.routine.routineExercises?.forEach((routineExercise) {
-        routineExercises.add(exercises[exercises.indexWhere(
-            (exercise) => exercise.id == routineExercise.exerciseId)]);
-      });
-
-      var set1 = exercises.toSet();
-      var set2 = routineExercises.toSet();
-      exercises = List.from(set1.difference(set2));
-    });
-  }
 
   void toggleItemSelection(var data) {
     if (_selected.contains(data)) {
@@ -71,8 +37,13 @@ class _AddRoutineExercisesState extends State<AddRoutineExercises> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RoutineListModel>(
-      builder: (context, routineListModel, child) {
+    return Consumer2<RoutineListModel, ExerciseListModel>(
+      builder: (context, routineListModel, exerciseListModel, child) {
+        var list = exerciseListModel.exercises.where((exercise) => !widget
+            .routine.routineExercises!
+            .map((exRoutineModel) => exRoutineModel.exerciseId)
+            .toList()
+            .contains(exercise.id));
         return Scaffold(
           appBar: AppBar(
             title: const Text("Select Exercises"),
@@ -109,11 +80,11 @@ class _AddRoutineExercisesState extends State<AddRoutineExercises> {
               )
             ],
           ),
-          body: exercises.isNotEmpty
+          body: list.isNotEmpty
               ? ListView.builder(
-                  itemCount: exercises.length, // length of listData
+                  itemCount: list.length, // length of listData
                   itemBuilder: (context, idx) {
-                    final data = exercises[idx]; // shorter variable name
+                    final data = list.elementAt(idx); // shorter variable name
                     return ListTile(
                       minTileHeight: 70,
                       contentPadding: const EdgeInsets.symmetric(
