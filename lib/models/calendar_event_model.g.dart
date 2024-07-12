@@ -10,12 +10,12 @@ CalendarEventModel _$CalendarEventModelFromJson(Map<String, dynamic> json) =>
     CalendarEventModel(
       (json['id'] as num).toInt(),
       DateTime.parse(json['kDay'] as String),
-      (json['exerciseId'] as num).toInt(),
+      RoutineModel.fromJson(json['routineSerie'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$CalendarEventModelToJson(CalendarEventModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'kDay': instance.kDay.toIso8601String(),
-      'exerciseId': instance.exerciseId,
+      'routineSerie': instance.routineSerie,
     };

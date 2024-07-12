@@ -8,7 +8,7 @@ import 'package:workout_tracker/models/screen_model.dart';
 import '../models/exercise_list_model.dart';
 import '../services/file_service.dart';
 import '../utils/format_list.dart';
-import 'modify_exercise.dart';
+import 'edit_exercise.dart';
 
 class Exercises extends StatefulWidget implements ScreenModel {
   Exercises({super.key, required this.context});
@@ -25,7 +25,7 @@ class Exercises extends StatefulWidget implements ScreenModel {
     onPressed: () {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => ModifyExercise(
+          builder: (_) => EditExercise(
             exercise: ExerciseModel(
                 null, null, null, null, null, null, null, null, null, null),
           ),
@@ -89,7 +89,7 @@ class _ExercisesState extends State<Exercises> {
                       Navigator.of(context)
                           .push(
                             MaterialPageRoute(
-                              builder: (_) => ModifyExercise(
+                              builder: (_) => EditExercise(
                                 exercise: ExerciseModel(
                                   data.id,
                                   data.imagePath1,

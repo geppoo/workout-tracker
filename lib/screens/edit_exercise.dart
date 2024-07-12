@@ -13,16 +13,16 @@ import '../models/exercise_list_model.dart';
 import '../theme/theme_provider.dart';
 import '../utils/format_list.dart';
 
-class ModifyExercise extends StatefulWidget {
-  const ModifyExercise({super.key, required this.exercise});
+class EditExercise extends StatefulWidget {
+  const EditExercise({super.key, required this.exercise});
 
   final ExerciseModel exercise;
 
   @override
-  State<ModifyExercise> createState() => _ModifyExerciseState();
+  State<EditExercise> createState() => _EditExerciseState();
 }
 
-class _ModifyExerciseState extends State<ModifyExercise> {
+class _EditExerciseState extends State<EditExercise> {
   static const listTilePadding =
       EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10);
 

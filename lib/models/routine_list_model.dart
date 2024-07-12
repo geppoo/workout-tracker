@@ -38,28 +38,36 @@ class RoutineListModel extends ChangeNotifier {
 
   Future<void> add(RoutineModel routine) async {
     _routines.add(routine);
-    await FileService.routines().writeFile(jsonEncode(_routines)).then((success) {
+    await FileService.routines()
+        .writeFile(jsonEncode(_routines))
+        .then((success) {
       notifyListeners();
     });
   }
 
   Future<void> setAt(int index, RoutineModel routine) async {
     _routines[index] = routine;
-    await FileService.routines().writeFile(jsonEncode(_routines)).then((success) {
+    await FileService.routines()
+        .writeFile(jsonEncode(_routines))
+        .then((success) {
       notifyListeners();
     });
   }
 
   Future<void> removeAt(int index) async {
     _routines.removeAt(index);
-    await FileService.routines().writeFile(jsonEncode(_routines)).then((success) {
+    await FileService.routines()
+        .writeFile(jsonEncode(_routines))
+        .then((success) {
       notifyListeners();
     });
   }
 
   Future<void> removeAll() async {
     _routines.clear();
-    await FileService.routines().writeFile(jsonEncode(_routines)).then((success) {
+    await FileService.routines()
+        .writeFile(jsonEncode(_routines))
+        .then((success) {
       notifyListeners();
     });
   }

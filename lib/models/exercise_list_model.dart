@@ -38,28 +38,36 @@ class ExerciseListModel extends ChangeNotifier {
 
   Future<void> add(ExerciseModel exercise) async {
     _exercises.add(exercise);
-    await FileService.exercises().writeFile(jsonEncode(_exercises)).then((success) {
+    await FileService.exercises()
+        .writeFile(jsonEncode(_exercises))
+        .then((success) {
       notifyListeners();
     });
   }
 
   Future<void> setAt(int index, ExerciseModel exercise) async {
     _exercises[index] = exercise;
-    await FileService.exercises().writeFile(jsonEncode(_exercises)).then((success) {
+    await FileService.exercises()
+        .writeFile(jsonEncode(_exercises))
+        .then((success) {
       notifyListeners();
     });
   }
 
   Future<void> removeAt(int index) async {
     _exercises.removeAt(index);
-    await FileService.exercises().writeFile(jsonEncode(_exercises)).then((success) {
+    await FileService.exercises()
+        .writeFile(jsonEncode(_exercises))
+        .then((success) {
       notifyListeners();
     });
   }
 
   Future<void> removeAll() async {
     _exercises.clear();
-    await FileService.exercises().writeFile(jsonEncode(_exercises)).then((success) {
+    await FileService.exercises()
+        .writeFile(jsonEncode(_exercises))
+        .then((success) {
       notifyListeners();
     });
   }

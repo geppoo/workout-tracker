@@ -13,16 +13,16 @@ import '../models/routine_list_model.dart';
 import '../services/file_service.dart';
 import '../theme/theme_provider.dart';
 
-class ModifyRoutine extends StatefulWidget {
-  const ModifyRoutine({super.key, required this.routine});
+class EditRoutine extends StatefulWidget {
+  const EditRoutine({super.key, required this.routine});
 
   final RoutineModel routine;
 
   @override
-  State<ModifyRoutine> createState() => _ModifyRoutineState();
+  State<EditRoutine> createState() => _EditRoutineState();
 }
 
-class _ModifyRoutineState extends State<ModifyRoutine>
+class _EditRoutineState extends State<EditRoutine>
     with SingleTickerProviderStateMixin {
   late List<ExerciseModel> _selected = [];
   late bool _selectionEnabled = true;
