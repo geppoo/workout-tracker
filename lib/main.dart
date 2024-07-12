@@ -67,6 +67,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // default screen value
   int _selectedIndex = 0;
 
   @override
@@ -89,15 +90,13 @@ class _HomePageState extends State<HomePage> {
       ),
     ];
 
-    final bool isLightMode = Provider.of<ThemeProvider>(context).themeData ==
-        CustomThemes().lightMode;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Workout Tracker"),
         actions: [
           Switch(
-            value: isLightMode,
+            value: Provider.of<ThemeProvider>(context).themeData ==
+                CustomThemes().lightMode,
             onChanged: (value) {
               Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
             },
