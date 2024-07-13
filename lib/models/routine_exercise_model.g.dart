@@ -9,16 +9,16 @@ part of 'routine_exercise_model.dart';
 RoutineExerciseModel _$RoutineExerciseModelFromJson(
         Map<String, dynamic> json) =>
     RoutineExerciseModel(
-      (json['exerciseId'] as num?)?.toInt(),
-      (json['exerciseSeries'] as List<dynamic>?)
-          ?.map((e) => ExerciseSerieModel.fromJson(e as Map<String, dynamic>))
+      ExerciseModel.fromJson(json['exercise'] as Map<String, dynamic>),
+      (json['exerciseSeries'] as List<dynamic>)
+          .map((e) => ExerciseSerieModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$RoutineExerciseModelToJson(
         RoutineExerciseModel instance) =>
     <String, dynamic>{
-      'exerciseId': instance.exerciseId,
+      'exercise': instance.exercise,
       'exerciseSeries': instance.exerciseSeries,
     };
 

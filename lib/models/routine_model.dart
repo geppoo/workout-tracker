@@ -5,8 +5,8 @@ part 'routine_model.g.dart';
 
 @JsonSerializable()
 class RoutineModel {
-  int? id;
-  String? name;
+  final int id;
+  String name;
   int? hexIconColor;
   Set<RoutineExerciseModel>? routineExercises;
 

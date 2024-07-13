@@ -166,7 +166,7 @@ class _EditExerciseState extends State<EditExercise> {
                       widget.exercise.imagePath2 = "";
                       widget.exercise.description = descriptionController.text;
                       widget.exercise.type =
-                          ExerciseType.fromString(typeController.text);
+                          ExerciseType.fromString(typeController.text)!;
                       widget.exercise.mainMuscleGroups = mainMuscleGroups;
                       widget.exercise.supportMuscleGroups = supportMuscleGroups;
                       widget.exercise.equipment = equipments;

@@ -23,7 +23,8 @@ class Calendar extends StatefulWidget implements ScreenModel {
   late final Widget floatingActionButton = FloatingActionButton(
     child: const Icon(Icons.edit_calendar_rounded),
     onPressed: () {
-      showAlertDialog(context);
+      //showAlertDialog(context);
+      //TODO: implementare apertura pagina per modifica eventi del giorno
     },
   );
 

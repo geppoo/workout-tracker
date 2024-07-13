@@ -7,8 +7,8 @@ part of 'routine_model.dart';
 // **************************************************************************
 
 RoutineModel _$RoutineModelFromJson(Map<String, dynamic> json) => RoutineModel(
-      (json['id'] as num?)?.toInt(),
-      json['name'] as String?,
+      (json['id'] as num).toInt(),
+      json['name'] as String,
       (json['hexIconColor'] as num?)?.toInt(),
       (json['routineExercises'] as List<dynamic>?)
           ?.map((e) => RoutineExerciseModel.fromJson(e as Map<String, dynamic>))

@@ -80,12 +80,16 @@ class _EditRoutineState extends State<EditRoutine>
   Widget build(BuildContext context) {
     return Consumer2<RoutineListModel, ExerciseListModel>(
       builder: (context, routineListModel, exerciseListModel, child) {
-        var routineExercises = exerciseListModel.exercises
-            .where((exercise) => widget.routine.routineExercises!
-                .map((exRoutineModel) => exRoutineModel.exerciseId)
-                .toList()
-                .contains(exercise.id))
-            .toList();
+        List<ExerciseModel> routineExercises = [];
+        if(widget.routine.routineExercises != null){
+          routineExercises = exerciseListModel.exercises
+              .where((exercise) => widget.routine.routineExercises!
+              .map((exRoutineModel) => exRoutineModel.exercise)
+              .toList()
+              .contains(exercise))
+              .toList();
+        }
+
         return Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
@@ -96,11 +100,11 @@ class _EditRoutineState extends State<EditRoutine>
               Offstage(
                 offstage: _selected.isEmpty,
                 child: IconButton(
-                  icon: const Icon(Icons.delete_forever_rounded),
+                  icon: const Icon(Icons.delete_forever_outlined),
                   onPressed: () {
                     for (var selectedExercise in _selected) {
                       widget.routine.routineExercises?.removeWhere((exercise) =>
-                          exercise.exerciseId == selectedExercise.id);
+                          exercise.exercise == selectedExercise);
                     }
                     routineListModel.setAt(
                         routineListModel.routines.indexWhere(
@@ -113,7 +117,18 @@ class _EditRoutineState extends State<EditRoutine>
                     });
                   },
                 ),
-              )
+              ),
+              IconButton(
+                icon: const Icon(Icons.playlist_remove_rounded),
+                onPressed: () {
+                  routineListModel.removeAt(
+                    routineListModel.routines.indexWhere(
+                        (routine) => routine.id == widget.routine.id),
+                  );
+
+                  Navigator.pop(context);
+                },
+              ),
             ],
           ),
           body: routineExercises.isNotEmpty
@@ -138,7 +153,7 @@ class _EditRoutineState extends State<EditRoutine>
                             //cerco il RoutineExerciseModel della mia routine tramite esercizio
                             RoutineExerciseModel routineExercise =
                                 widget.routine.routineExercises!.firstWhere(
-                                    (value) => value.exerciseId == data.id);
+                                    (value) => value.exercise == data);
 
                             return StatefulBuilder(
                               builder: (BuildContext context,

@@ -8,11 +8,11 @@ part of 'exercise_model.dart';
 
 ExerciseModel _$ExerciseModelFromJson(Map<String, dynamic> json) =>
     ExerciseModel(
-      (json['id'] as num?)?.toInt(),
+      (json['id'] as num).toInt(),
       json['imagePath1'] as String?,
       json['imagePath2'] as String?,
-      json['name'] as String?,
-      $enumDecodeNullable(_$ExerciseTypeEnumMap, json['type']),
+      json['name'] as String,
+      $enumDecode(_$ExerciseTypeEnumMap, json['type']),
       (json['mainMuscleGroups'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$MuscleGroupsEnumMap, e))
           .toList(),
@@ -33,7 +33,7 @@ Map<String, dynamic> _$ExerciseModelToJson(ExerciseModel instance) =>
       'imagePath2': instance.imagePath2,
       'name': instance.name,
       'description': instance.description,
-      'type': _$ExerciseTypeEnumMap[instance.type],
+      'type': _$ExerciseTypeEnumMap[instance.type]!,
       'mainMuscleGroups': instance.mainMuscleGroups
           ?.map((e) => _$MuscleGroupsEnumMap[e]!)
           .toList(),

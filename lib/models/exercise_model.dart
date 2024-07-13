@@ -8,12 +8,12 @@ part 'exercise_model.g.dart';
 
 @JsonSerializable()
 class ExerciseModel {
-  int? id;
+  late final int id;
   String? imagePath1;
   String? imagePath2;
-  String? name;
+  String name;
   String? description;
-  ExerciseType? type;
+  ExerciseType type;
   List<MuscleGroups>? mainMuscleGroups;
   List<MuscleGroups>? supportMuscleGroups;
   List<Equipment>? equipment;

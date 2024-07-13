@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_tracker/constants/exercise_type.dart';
 import 'package:workout_tracker/models/exercise_model.dart';
 import 'package:workout_tracker/models/screen_model.dart';
 
@@ -27,7 +28,17 @@ class Exercises extends StatefulWidget implements ScreenModel {
         MaterialPageRoute(
           builder: (_) => EditExercise(
             exercise: ExerciseModel(
-                null, null, null, null, null, null, null, null, null, null),
+              UniqueKey().hashCode,
+              null,
+              null,
+              "Name",
+              ExerciseType.conPesi,
+              null,
+              null,
+              null,
+              null,
+              null,
+            ),
           ),
         ),
       );

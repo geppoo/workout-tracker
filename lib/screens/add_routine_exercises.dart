@@ -39,11 +39,17 @@ class _AddRoutineExercisesState extends State<AddRoutineExercises> {
   Widget build(BuildContext context) {
     return Consumer2<RoutineListModel, ExerciseListModel>(
       builder: (context, routineListModel, exerciseListModel, child) {
-        var list = exerciseListModel.exercises.where((exercise) => !widget
-            .routine.routineExercises!
-            .map((exRoutineModel) => exRoutineModel.exerciseId)
-            .toList()
-            .contains(exercise.id));
+        Iterable<ExerciseModel> list = [];
+        if (widget.routine.routineExercises != null) {
+          list = exerciseListModel.exercises.where((exercise) => !widget
+              .routine.routineExercises!
+              .map((exRoutineModel) => exRoutineModel.exercise)
+              .toList()
+              .contains(exercise));
+        } else {
+          list = exerciseListModel.exercises;
+        }
+
         return Scaffold(
           appBar: AppBar(
             title: const Text("Select Exercises"),
@@ -57,7 +63,7 @@ class _AddRoutineExercisesState extends State<AddRoutineExercises> {
                     for (var exercise in _selected) {
                       widget.routine.routineExercises?.add(
                         RoutineExerciseModel(
-                          exercise.id,
+                          exercise,
                           [
                             ExerciseSerieModel(0, 10, 120),
                             ExerciseSerieModel(0, 10, 120),
