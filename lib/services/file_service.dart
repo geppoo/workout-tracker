@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:developer' as developer;
 
 import 'package:path_provider/path_provider.dart';
 

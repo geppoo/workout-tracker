@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_tracker/models/routine_model.dart';
@@ -10,7 +7,6 @@ import '../models/exercise_list_model.dart';
 import '../models/exercise_model.dart';
 import '../models/routine_exercise_model.dart';
 import '../models/routine_list_model.dart';
-import '../services/file_service.dart';
 import '../theme/theme_provider.dart';
 
 class EditRoutine extends StatefulWidget {

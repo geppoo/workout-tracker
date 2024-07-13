@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:workout_tracker/models/screen_model.dart';
 
 class Body extends StatefulWidget implements ScreenModel {

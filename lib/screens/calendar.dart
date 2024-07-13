@@ -1,14 +1,10 @@
 import 'dart:collection';
-import 'dart:convert';
-import 'dart:developer' as developer;
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:workout_tracker/models/screen_model.dart';
-import 'package:workout_tracker/services/file_service.dart';
 
 import '../models/calendar_event_list_model.dart';
 import '../models/calendar_event_model.dart';

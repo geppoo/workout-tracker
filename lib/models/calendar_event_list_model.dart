@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
 import 'package:workout_tracker/models/calendar_event_model.dart';
