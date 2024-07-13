@@ -79,9 +79,7 @@ class _EditExerciseState extends State<EditExercise> {
 
     nameController = TextEditingController(text: widget.exercise.name);
     typeController = TextEditingController(
-        text: widget.exercise.type == null
-            ? "-"
-            : ExerciseType.fromExerciseType(widget.exercise.type!));
+        text: ExerciseType.fromExerciseType(widget.exercise.type));
     descriptionController =
         TextEditingController(text: widget.exercise.description);
     mainMuscleGroupsController = TextEditingController(
@@ -120,9 +118,7 @@ class _EditExerciseState extends State<EditExercise> {
                   Navigator.pop(context);
                 },
               ),
-              title: widget.exercise.name == null
-                  ? const Text("Create Exercise")
-                  : Text(widget.exercise.name!),
+              title: Text(widget.exercise.name),
               actions: [
                 IconButton(
                   onPressed: () async {
@@ -190,27 +186,23 @@ class _EditExerciseState extends State<EditExercise> {
                   },
                   icon: const Icon(Icons.save_rounded),
                 ),
-                Visibility(
-                  visible: widget.exercise.id != null,
-                  child: IconButton(
-                    onPressed: () async {
-                      //Controllo se esiste un esercizio con lo stesso id
-                      if (exerciseListModel.exercises
-                          .map((item) => item.id)
-                          .contains(widget.exercise.id)) {
-                        //Se esiste lo elimino
-                        exerciseListModel
-                            .removeAt(exerciseListModel.exercises.indexWhere(
-                                (exercise) =>
-                                    exercise.id == widget.exercise.id))
-                            .then((voidValue) {
-                          if (!context.mounted) return;
-                          Navigator.of(context).pop();
-                        });
-                      }
-                    },
-                    icon: const Icon(Icons.delete_forever_rounded),
-                  ),
+                IconButton(
+                  onPressed: () async {
+                    //Controllo se esiste un esercizio con lo stesso id
+                    if (exerciseListModel.exercises
+                        .map((item) => item.id)
+                        .contains(widget.exercise.id)) {
+                      //Se esiste lo elimino
+                      exerciseListModel
+                          .removeAt(exerciseListModel.exercises.indexWhere(
+                              (exercise) => exercise.id == widget.exercise.id))
+                          .then((voidValue) {
+                        if (!context.mounted) return;
+                        Navigator.of(context).pop();
+                      });
+                    }
+                  },
+                  icon: const Icon(Icons.delete_forever_rounded),
                 ),
               ],
             ),

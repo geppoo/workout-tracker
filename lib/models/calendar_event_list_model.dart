@@ -63,6 +63,15 @@ class CalendarEventListModel extends ChangeNotifier {
       notifyListeners();
     });
   }
+  
+  Future<void> remove(CalendarEventModel kEvent) async {
+    _kEvents.remove(kEvent);
+    await FileService.calendar()
+        .writeFile(jsonEncode(_kEvents))
+        .then((success) {
+      notifyListeners();
+    });
+}
 
   Future<void> removeAll() async {
     _kEvents.clear();

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_tracker/constants/exercise_type.dart';
@@ -7,7 +5,6 @@ import 'package:workout_tracker/models/exercise_model.dart';
 import 'package:workout_tracker/models/screen_model.dart';
 
 import '../models/exercise_list_model.dart';
-import '../services/file_service.dart';
 import '../utils/format_list.dart';
 import 'edit_exercise.dart';
 
@@ -141,7 +138,7 @@ class _ExercisesState extends State<Exercises> {
                             ),
                           ),
                     title: Text(
-                      data.name ?? "",
+                      data.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(

@@ -1,14 +1,19 @@
+import 'dart:collection';
+import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:workout_tracker/models/screen_model.dart';
+import 'package:workout_tracker/services/file_service.dart';
 
 import '../models/calendar_event_list_model.dart';
 import '../models/calendar_event_model.dart';
 import '../theme/theme_provider.dart';
-import '../utils/calendar_util.dart';
+import 'edit_calendar_event.dart';
 
 class Calendar extends StatefulWidget implements ScreenModel {
   Calendar({super.key, required this.context});
@@ -19,12 +24,21 @@ class Calendar extends StatefulWidget implements ScreenModel {
   @override
   final BuildContext context;
 
+  late DateTime _editDate = DateTime.now();
+  late List<CalendarEventModel> _editEvents = [];
+
   @override
   late final Widget floatingActionButton = FloatingActionButton(
     child: const Icon(Icons.edit_calendar_rounded),
     onPressed: () {
-      //showAlertDialog(context);
-      //TODO: implementare apertura pagina per modifica eventi del giorno
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => EditCalendarEvent(
+            editDate: _editDate,
+            editEvents: _editEvents,
+          ),
+        ),
+      );
     },
   );
 
@@ -37,66 +51,68 @@ class Calendar extends StatefulWidget implements ScreenModel {
   set floatingActionButton(Widget floatingActionButton) {
     this.floatingActionButton = floatingActionButton;
   }
-
-  static void showAlertDialog(BuildContext context) {
-    // set up the button
-    Widget okButton = TextButton(
-      child: const Text("OK"),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: const Text("Calendar"),
-      content: const Text("Calendar yay!"),
-      actions: [
-        okButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
 }
 
 class _CalendarState extends State<Calendar> {
-  late final ValueNotifier<List<CalendarEventModel>> _selectedEvents;
+  late List<CalendarEventModel> _selectedEvents = [];
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
-      .toggledOff; // Can be toggled on/off by longpressing a date
+      .toggledOff; // Can be toggled on/off by long-pressing a date
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+  late LinkedHashMap<DateTime, List<CalendarEventModel>> kEventList =
+      LinkedHashMap<DateTime, List<CalendarEventModel>>(
+    equals: compareDays,
+    hashCode: getHashCode,
+  );
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
+  final kToday = DateTime.now();
+  final kFirstDay = DateTime(2020, DateTime.january);
+  final kLastDay = DateTime(DateTime.now().year, DateTime.now().month + 3, 15);
 
   @override
   void initState() {
     super.initState();
-
-    _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
 
-  @override
-  void dispose() {
-    _selectedEvents.dispose();
-    super.dispose();
+  DateTime dateOnly(DateTime dateTime) {
+    if (dateTime.isUtc) {
+      return DateTime.utc(dateTime.year, dateTime.month, dateTime.day);
+    } else {
+      return DateTime(dateTime.year, dateTime.month, dateTime.day);
+    }
+  }
+
+  void setKEvents(List<CalendarEventModel> kEvents) {
+    kEventList.clear();
+    for (var event in kEvents) {
+      (kEventList[dateOnly(event.kDay)] ??= []).add(event);
+    }
+  }
+
+  int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
+  }
+
+  List<DateTime> daysInRange(DateTime first, DateTime last) {
+    final dayCount = last.difference(first).inDays + 1;
+    return List.generate(
+      dayCount,
+      (index) => DateTime.utc(first.year, first.month, first.day + index),
+    );
+  }
+
+  bool compareDays(DateTime? d1, DateTime d2) {
+    return d1?.year == d2.year && d1?.month == d2.month && d1?.day == d2.day;
   }
 
   List<CalendarEventModel> _getEventsForDay(DateTime day) {
-    // Implementation example
     return kEventList[day] ?? [];
   }
 
   List<CalendarEventModel> _getEventsForRange(DateTime start, DateTime end) {
-    // Implementation example
     final days = daysInRange(start, end);
 
     return [
@@ -105,7 +121,7 @@ class _CalendarState extends State<Calendar> {
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    if (!isSameDay(_selectedDay, selectedDay)) {
+    if (!compareDays(_selectedDay, selectedDay)) {
       setState(() {
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
@@ -113,9 +129,11 @@ class _CalendarState extends State<Calendar> {
         _rangeEnd = null;
         _rangeSelectionMode = RangeSelectionMode.toggledOff;
       });
-
-      _selectedEvents.value = _getEventsForDay(selectedDay);
     }
+    _selectedEvents = _getEventsForDay(selectedDay);
+
+    widget._editDate = selectedDay;
+    widget._editEvents = _selectedEvents;
   }
 
   void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
@@ -129,11 +147,11 @@ class _CalendarState extends State<Calendar> {
 
     // `start` or `end` could be null
     if (start != null && end != null) {
-      _selectedEvents.value = _getEventsForRange(start, end);
+      _selectedEvents = _getEventsForRange(start, end);
     } else if (start != null) {
-      _selectedEvents.value = _getEventsForDay(start);
+      _selectedEvents = _getEventsForDay(start);
     } else if (end != null) {
-      _selectedEvents.value = _getEventsForDay(end);
+      _selectedEvents = _getEventsForDay(end);
     }
   }
 
@@ -141,15 +159,17 @@ class _CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     return Consumer<CalendarEventListModel>(
       builder: (context, calendarListModel, child) {
-        // Setto tutti gli eventi letti dal provider
+        // Init vars
         setKEvents(calendarListModel.kEvents);
+        _selectedDay = _focusedDay;
+        _selectedEvents = _getEventsForDay(_selectedDay!);
         return Column(
           children: [
             TableCalendar<CalendarEventModel>(
               firstDay: kFirstDay,
               lastDay: kLastDay,
               focusedDay: _focusedDay,
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              selectedDayPredicate: (day) => compareDays(_selectedDay, day),
               rangeStartDay: _rangeStart,
               rangeEndDay: _rangeEnd,
               calendarFormat: _calendarFormat,
@@ -180,10 +200,11 @@ class _CalendarState extends State<Calendar> {
                   shape: BoxShape.circle,
                 ),
                 todayTextStyle: TextStyle(
-                    color: Provider.of<ThemeProvider>(context)
-                        .themeData
-                        .colorScheme
-                        .onSecondaryContainer),
+                  color: Provider.of<ThemeProvider>(context)
+                      .themeData
+                      .colorScheme
+                      .onSecondaryContainer,
+                ),
                 rangeStartDecoration: BoxDecoration(
                   color: Provider.of<ThemeProvider>(context)
                       .themeData
@@ -202,10 +223,14 @@ class _CalendarState extends State<Calendar> {
                     .themeData
                     .colorScheme
                     .primaryContainer,
-                markerDecoration: const BoxDecoration(
-                  color: Colors.purple,
+                markerDecoration: BoxDecoration(
+                  color: Provider.of<ThemeProvider>(context)
+                      .themeData
+                      .colorScheme
+                      .inverseSurface,
                   shape: BoxShape.circle,
                 ),
+                markersMaxCount: 5,
               ),
               onDaySelected: _onDaySelected,
               onRangeSelected: _onRangeSelected,
@@ -222,27 +247,22 @@ class _CalendarState extends State<Calendar> {
             ),
             const SizedBox(height: 8.0),
             Expanded(
-              child: ValueListenableBuilder<List<CalendarEventModel>>(
-                valueListenable: _selectedEvents,
-                builder: (context, value, _) {
-                  return ListView.builder(
-                    itemCount: value.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 12.0,
-                          vertical: 4.0,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: ListTile(
-                          onTap: () => developer.log('${value[index]}'),
-                          title: Text('${value[index].id}'),
-                        ),
-                      );
-                    },
+              child: ListView.builder(
+                itemCount: _selectedEvents.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12.0,
+                      vertical: 4.0,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: ListTile(
+                      onTap: () {},
+                      title: Text(_selectedEvents[index].routineSerie.name),
+                    ),
                   );
                 },
               ),
