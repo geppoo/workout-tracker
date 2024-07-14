@@ -20,7 +20,7 @@ class RoutineExerciseModel {
 
   @override
   String toString() {
-    return "{Exercise Id: $exercise, Exercises: $exerciseSeries";
+    return "{Exercise: $exercise, Series: $exerciseSeries";
   }
 }
 

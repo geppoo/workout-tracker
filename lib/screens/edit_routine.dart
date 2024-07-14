@@ -1,3 +1,6 @@
+import 'dart:developer' as developer;
+
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_tracker/models/routine_model.dart';
@@ -23,7 +26,6 @@ class _EditRoutineState extends State<EditRoutine>
   late List<ExerciseModel> _selected = [];
   late bool _selectionEnabled = true;
   late AnimationController _controller;
-  late Animation _animation;
 
   final FocusNode _focusNode = FocusNode();
 
@@ -31,11 +33,9 @@ class _EditRoutineState extends State<EditRoutine>
   void initState() {
     super.initState();
     _controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-    _animation = Tween(begin: 300.0, end: 50.0).animate(_controller)
-      ..addListener(() {
-        setState(() {});
-      });
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
 
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
@@ -76,22 +76,25 @@ class _EditRoutineState extends State<EditRoutine>
   Widget build(BuildContext context) {
     return Consumer2<RoutineListModel, ExerciseListModel>(
       builder: (context, routineListModel, exerciseListModel, child) {
-        List<ExerciseModel> routineExercises = [];
-        if(widget.routine.routineExercises != null){
+        /*List<ExerciseModel> routineExercises = [];
+        if (widget.routine.routineExercises != null) {
           routineExercises = exerciseListModel.exercises
               .where((exercise) => widget.routine.routineExercises!
-              .map((exRoutineModel) => exRoutineModel.exercise)
-              .toList()
-              .contains(exercise))
+                  .map((exRoutineModel) => exRoutineModel.exercise)
+                  .toList()
+                  .contains(exercise))
               .toList();
+        }*/
+
+        List<RoutineExerciseModel> routineExercises = [];
+        if (widget.routine.routineExercises != null) {
+          routineExercises = widget.routine.routineExercises!.toList();
         }
 
         return Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: Text(widget.routine.name != null
-                ? widget.routine.name!
-                : "loading..."),
+            title: Text(widget.routine.name),
             actions: [
               Offstage(
                 offstage: _selected.isEmpty,
@@ -99,8 +102,8 @@ class _EditRoutineState extends State<EditRoutine>
                   icon: const Icon(Icons.delete_forever_outlined),
                   onPressed: () {
                     for (var selectedExercise in _selected) {
-                      widget.routine.routineExercises?.removeWhere((exercise) =>
-                          exercise.exercise == selectedExercise);
+                      widget.routine.routineExercises?.removeWhere(
+                          (exercise) => exercise.exercise == selectedExercise);
                     }
                     routineListModel.setAt(
                         routineListModel.routines.indexWhere(
@@ -129,16 +132,30 @@ class _EditRoutineState extends State<EditRoutine>
           ),
           body: routineExercises.isNotEmpty
               ? ListView.builder(
-                  itemCount: routineExercises.length, // length of listData
+                  itemCount: routineExercises.length,
                   itemBuilder: (context, idx) {
-                    final data = routineExercises[idx]; // shorter variable name
+                    final data = routineExercises[idx];
+                    //Init subtitle
+                    RegExp regex = RegExp(r'([.]*0)(?!.*\d)');
+                    String weightSubtitle = "Peso";
+                    String repsSubtitle = "Rip.";
+                    for (final serie in data.exerciseSeries) {
+                      weightSubtitle =
+                          "$weightSubtitle ${serie.weight.toString().replaceAll(regex, "")},";
+                      repsSubtitle =
+                          "$repsSubtitle ${serie.repetitions.toString()},";
+                    }
+                    weightSubtitle =
+                        weightSubtitle.substring(0, weightSubtitle.length - 1);
+                    repsSubtitle =
+                        repsSubtitle.substring(0, repsSubtitle.length - 1);
                     return ListTile(
                       minTileHeight: 70,
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 10),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
-                      selected: _selected.contains(data),
+                      selected: _selected.contains(data.exercise),
                       onTap: () {
                         // Open modify_exercise_serie modal for selected exercise
                         showModalBottomSheet<void>(
@@ -146,11 +163,6 @@ class _EditRoutineState extends State<EditRoutine>
                           context: context,
                           enableDrag: true,
                           builder: (BuildContext context) {
-                            //cerco il RoutineExerciseModel della mia routine tramite esercizio
-                            RoutineExerciseModel routineExercise =
-                                widget.routine.routineExercises!.firstWhere(
-                                    (value) => value.exercise == data);
-
                             return StatefulBuilder(
                               builder: (BuildContext context,
                                   StateSetter updateState) {
@@ -170,7 +182,7 @@ class _EditRoutineState extends State<EditRoutine>
                                         child: Scaffold(
                                           resizeToAvoidBottomInset: true,
                                           appBar: AppBar(
-                                            title: Text(data.name!),
+                                            title: Text(data.exercise.name),
                                             leading: IconButton(
                                               icon: const Icon(
                                                   Icons.arrow_back_rounded),
@@ -281,7 +293,7 @@ class _EditRoutineState extends State<EditRoutine>
                                                                     right: 10),
                                                           ),
                                                           Text(
-                                                            "${routineExercise.exerciseSeries?.length}",
+                                                            "${data.exerciseSeries.length}",
                                                             style:
                                                                 const TextStyle(
                                                               fontSize: 25,
@@ -304,15 +316,13 @@ class _EditRoutineState extends State<EditRoutine>
                                                                 .secondaryContainer,
                                                             child: IconButton(
                                                               onPressed: () {
-                                                                if (routineExercise
-                                                                        .exerciseSeries!
+                                                                if (data.exerciseSeries
                                                                         .length >
                                                                     1) {
                                                                   updateState(
                                                                       () {
-                                                                    routineExercise
-                                                                        .exerciseSeries
-                                                                        ?.removeLast();
+                                                                    data.exerciseSeries
+                                                                        .removeLast();
                                                                   });
                                                                 }
                                                               },
@@ -337,21 +347,19 @@ class _EditRoutineState extends State<EditRoutine>
                                                             child: IconButton(
                                                               onPressed: () {
                                                                 var exerciseCopy =
-                                                                    routineExercise
-                                                                        .exerciseSeries
-                                                                        ?.last;
+                                                                    data.exerciseSeries
+                                                                        .last;
 
                                                                 updateState(() {
-                                                                  routineExercise
-                                                                      .exerciseSeries
-                                                                      ?.add(
+                                                                  data.exerciseSeries
+                                                                      .add(
                                                                     ExerciseSerieModel(
                                                                       exerciseCopy
-                                                                          ?.weight,
+                                                                          .weight,
                                                                       exerciseCopy
-                                                                          ?.repetitions,
+                                                                          .repetitions,
                                                                       exerciseCopy
-                                                                          ?.restSeconds,
+                                                                          .restSeconds,
                                                                     ),
                                                                   );
                                                                 });
@@ -375,13 +383,8 @@ class _EditRoutineState extends State<EditRoutine>
                                               ),
                                               Expanded(
                                                 child: ListView.builder(
-                                                  itemCount: routineExercise
-                                                              .exerciseSeries !=
-                                                          null
-                                                      ? routineExercise
-                                                          .exerciseSeries
-                                                          ?.length
-                                                      : 0,
+                                                  itemCount: data
+                                                      .exerciseSeries.length,
                                                   itemBuilder: (context, idx) {
                                                     return Padding(
                                                       padding:
@@ -420,18 +423,15 @@ class _EditRoutineState extends State<EditRoutine>
                                                                     TextField(
                                                                   controller:
                                                                       TextEditingController(
-                                                                    text: routineExercise.exerciseSeries !=
-                                                                            null
-                                                                        ? "${routineExercise.exerciseSeries?.elementAt(idx).weight}"
-                                                                        : "placeholder",
+                                                                    text:
+                                                                        "${data.exerciseSeries.elementAt(idx).weight}",
                                                                   ),
                                                                   onSubmitted:
                                                                       (value) {
                                                                     updateState(
                                                                         () {
-                                                                      routineExercise
-                                                                          .exerciseSeries
-                                                                          ?.elementAt(
+                                                                      data.exerciseSeries
+                                                                          .elementAt(
                                                                               idx)
                                                                           .weight = double.parse(value);
                                                                     });
@@ -463,18 +463,15 @@ class _EditRoutineState extends State<EditRoutine>
                                                                     TextField(
                                                                   controller:
                                                                       TextEditingController(
-                                                                    text: routineExercise.exerciseSeries !=
-                                                                            null
-                                                                        ? "${routineExercise.exerciseSeries?.elementAt(idx).restSeconds}"
-                                                                        : "placeholder",
+                                                                    text:
+                                                                        "${data.exerciseSeries.elementAt(idx).restSeconds}",
                                                                   ),
                                                                   onSubmitted:
                                                                       (value) {
                                                                     updateState(
                                                                         () {
-                                                                      routineExercise
-                                                                          .exerciseSeries
-                                                                          ?.elementAt(
+                                                                      data.exerciseSeries
+                                                                          .elementAt(
                                                                               idx)
                                                                           .restSeconds = int.parse(value);
                                                                     });
@@ -505,11 +502,7 @@ class _EditRoutineState extends State<EditRoutine>
                                                                 minWidth: 35,
                                                               ),
                                                               child: Text(
-                                                                routineExercise
-                                                                            .exerciseSeries !=
-                                                                        null
-                                                                    ? "${routineExercise.exerciseSeries?.elementAt(idx).repetitions}x"
-                                                                    : "placeholder",
+                                                                "${data.exerciseSeries.elementAt(idx).repetitions}x",
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -535,19 +528,20 @@ class _EditRoutineState extends State<EditRoutine>
                                                                   .secondaryContainer,
                                                               child: IconButton(
                                                                 onPressed: () {
-                                                                  var repetitions = routineExercise
+                                                                  var repetitions = data
                                                                       .exerciseSeries
-                                                                      ?.elementAt(
+                                                                      .elementAt(
                                                                           idx)
                                                                       .repetitions;
 
                                                                   updateState(
                                                                       () {
-                                                                    routineExercise
-                                                                        .exerciseSeries
-                                                                        ?.elementAt(
-                                                                            idx)
-                                                                        .repetitions = (repetitions! - 1);
+                                                                    data.exerciseSeries
+                                                                            .elementAt(
+                                                                                idx)
+                                                                            .repetitions =
+                                                                        (repetitions! -
+                                                                            1);
                                                                   });
                                                                 },
                                                                 icon:
@@ -572,19 +566,20 @@ class _EditRoutineState extends State<EditRoutine>
                                                                   .secondaryContainer,
                                                               child: IconButton(
                                                                 onPressed: () {
-                                                                  var repetitions = routineExercise
+                                                                  var repetitions = data
                                                                       .exerciseSeries
-                                                                      ?.elementAt(
+                                                                      .elementAt(
                                                                           idx)
                                                                       .repetitions;
 
                                                                   updateState(
                                                                       () {
-                                                                    routineExercise
-                                                                        .exerciseSeries
-                                                                        ?.elementAt(
-                                                                            idx)
-                                                                        .repetitions = (repetitions! + 1);
+                                                                    data.exerciseSeries
+                                                                            .elementAt(
+                                                                                idx)
+                                                                            .repetitions =
+                                                                        (repetitions! +
+                                                                            1);
                                                                   });
                                                                 },
                                                                 icon:
@@ -618,7 +613,7 @@ class _EditRoutineState extends State<EditRoutine>
                         );
                       },
                       enabled: _selectionEnabled,
-                      leading: _selected.contains(data)
+                      leading: _selected.contains(data.exercise)
                           ? CircleAvatar(
                               radius: 23,
                               child: IconButton(
@@ -640,7 +635,7 @@ class _EditRoutineState extends State<EditRoutine>
                               ),
                             ),
                       title: Text(
-                        data.name ?? "",
+                        data.exercise.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -649,9 +644,10 @@ class _EditRoutineState extends State<EditRoutine>
                         ),
                       ),
                       dense: true,
-                      /*subtitle: const Text("test",
-            overflow: TextOverflow.ellipsis,
-          ),*/
+                      subtitle: Text(
+                        "Serie ${data.exerciseSeries.length} $weightSubtitle $repsSubtitle",
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     );
                   },
                 )
