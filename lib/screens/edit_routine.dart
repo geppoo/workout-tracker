@@ -1,6 +1,3 @@
-import 'dart:developer' as developer;
-
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_tracker/models/routine_model.dart';
@@ -76,16 +73,6 @@ class _EditRoutineState extends State<EditRoutine>
   Widget build(BuildContext context) {
     return Consumer2<RoutineListModel, ExerciseListModel>(
       builder: (context, routineListModel, exerciseListModel, child) {
-        /*List<ExerciseModel> routineExercises = [];
-        if (widget.routine.routineExercises != null) {
-          routineExercises = exerciseListModel.exercises
-              .where((exercise) => widget.routine.routineExercises!
-                  .map((exRoutineModel) => exRoutineModel.exercise)
-                  .toList()
-                  .contains(exercise))
-              .toList();
-        }*/
-
         List<RoutineExerciseModel> routineExercises = [];
         if (widget.routine.routineExercises != null) {
           routineExercises = widget.routine.routineExercises!.toList();
@@ -137,8 +124,8 @@ class _EditRoutineState extends State<EditRoutine>
                     final data = routineExercises[idx];
                     //Init subtitle
                     RegExp regex = RegExp(r'([.]*0)(?!.*\d)');
-                    String weightSubtitle = "Peso";
-                    String repsSubtitle = "Rip.";
+                    String weightSubtitle = "Weight";
+                    String repsSubtitle = "Rep.";
                     for (final serie in data.exerciseSeries) {
                       weightSubtitle =
                           "$weightSubtitle ${serie.weight.toString().replaceAll(regex, "")},";
@@ -421,6 +408,9 @@ class _EditRoutineState extends State<EditRoutine>
                                                                 width: 50,
                                                                 child:
                                                                     TextField(
+                                                                  keyboardType:
+                                                                      TextInputType
+                                                                          .number,
                                                                   controller:
                                                                       TextEditingController(
                                                                     text:
@@ -461,6 +451,9 @@ class _EditRoutineState extends State<EditRoutine>
                                                                 width: 50,
                                                                 child:
                                                                     TextField(
+                                                                  keyboardType:
+                                                                      TextInputType
+                                                                          .number,
                                                                   controller:
                                                                       TextEditingController(
                                                                     text:
@@ -645,7 +638,7 @@ class _EditRoutineState extends State<EditRoutine>
                       ),
                       dense: true,
                       subtitle: Text(
-                        "Serie ${data.exerciseSeries.length} $weightSubtitle $repsSubtitle",
+                        "Series ${data.exerciseSeries.length} | $weightSubtitle | $repsSubtitle",
                         overflow: TextOverflow.ellipsis,
                       ),
                     );

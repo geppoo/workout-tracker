@@ -198,9 +198,9 @@ class _EditExerciseState extends State<EditExercise> {
                               (exercise) => exercise.id == widget.exercise.id))
                           .then((voidValue) {
                         if (!context.mounted) return;
-                        Navigator.of(context).pop();
                       });
                     }
+                    Navigator.of(context).pop();
                   },
                   icon: const Icon(Icons.delete_forever_rounded),
                 ),

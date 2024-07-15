@@ -142,7 +142,9 @@ class _RoutinesFloatingActionButtonState
                   },
                 );
               },
-            );
+            ).then((voidVal) {
+              _titleTextController.clear();
+            });
           },
         );
       },
