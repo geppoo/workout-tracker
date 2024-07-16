@@ -23,6 +23,12 @@ class _RoutinesFloatingActionButtonState
   final _titleTextController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _selectedRoutineColor = Colors.orange;
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _titleTextController.dispose();
@@ -33,7 +39,7 @@ class _RoutinesFloatingActionButtonState
     return Consumer<RoutineListModel>(
       builder: (context, routineListModel, child) {
         return FloatingActionButton(
-          child: const Icon(Icons.add),
+          child: const Icon(Icons.playlist_add_rounded),
           onPressed: () {
             showModalBottomSheet<void>(
               isScrollControlled: true,
@@ -51,7 +57,7 @@ class _RoutinesFloatingActionButtonState
                               Radius.circular(30),
                             ),
                           ),
-                          height: MediaQuery.of(context).size.height * 0.70,
+                          height: MediaQuery.of(context).size.height * 0.80,
                           child: GestureDetector(
                             child: Scaffold(
                               resizeToAvoidBottomInset: false,
@@ -111,13 +117,12 @@ class _RoutinesFloatingActionButtonState
                                   ),
                                   ColorPicker(
                                     onColorChanged: (Color value) {
-                                      setState(() {
+                                      /*setState(() {
                                         _selectedRoutineColor = value;
-                                      });
+                                      });*/
                                       updateState(() {
                                         _selectedRoutineColor = value;
                                       });
-                                      developer.log(value.toString());
                                     },
                                     selectedPickerTypeColor:
                                         _selectedRoutineColor,
@@ -144,6 +149,7 @@ class _RoutinesFloatingActionButtonState
               },
             ).then((voidVal) {
               _titleTextController.clear();
+              _selectedRoutineColor = Colors.orange;
             });
           },
         );
