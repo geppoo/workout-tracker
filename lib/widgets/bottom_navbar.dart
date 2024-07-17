@@ -13,6 +13,13 @@ class BottomNavbar extends StatefulWidget {
 
 class _BottomNavbarState extends State<BottomNavbar> {
   late int _selectedIndex = 0;
+  final List<String> routes = [
+    "/routines",
+    "/exercises",
+    "/calendar",
+    "/body",
+    "/other",
+  ];
 
   @override
   Widget build(BuildContext context) {

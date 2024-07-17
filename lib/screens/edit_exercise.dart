@@ -180,7 +180,6 @@ class _EditExerciseState extends State<EditExercise> {
                           widget.exercise);
                     } else {
                       //Non esiste, quindo salvo l'esercizio
-                      widget.exercise.id = UniqueKey().hashCode;
                       exerciseListModel.add(widget.exercise);
                     }
                   },

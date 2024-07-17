@@ -4,57 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:workout_tracker/models/screen_model.dart';
 
 import '../models/calendar_event_list_model.dart';
 import '../models/calendar_event_model.dart';
 import '../theme/theme_provider.dart';
+import '../widgets/bottom_navbar.dart';
 import 'edit_calendar_event.dart';
 
-class Calendar extends StatefulWidget implements ScreenModel {
-  Calendar({super.key, required this.context});
+class Calendar extends StatefulWidget {
+  const Calendar({super.key});
 
   @override
   State<Calendar> createState() => _CalendarState();
-
-  @override
-  final BuildContext context;
-
-  @override
-  late final AppBar appBar = AppBar();
-
-  late DateTime _editDate = DateTime.now();
-  late List<CalendarEventModel> _editEvents = [];
-
-  @override
-  late final Widget floatingActionButton = FloatingActionButton(
-    child: const Icon(Icons.edit_calendar_rounded),
-    onPressed: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => EditCalendarEvent(
-            editDate: _editDate,
-            editEvents: _editEvents,
-          ),
-        ),
-      );
-    },
-  );
-
-  @override
-  set context(BuildContext context) {
-    this.context = context;
-  }
-
-  @override
-  set floatingActionButton(Widget floatingActionButton) {
-    this.floatingActionButton = floatingActionButton;
-  }
-
-  @override
-  set appBar(AppBar appBar) {
-    this.appBar = appBar;
-  }
 }
 
 class _CalendarState extends State<Calendar> {
@@ -75,6 +36,9 @@ class _CalendarState extends State<Calendar> {
   final kToday = DateTime.now();
   final kFirstDay = DateTime(2020, DateTime.january);
   final kLastDay = DateTime(DateTime.now().year, DateTime.now().month + 3, 15);
+
+  DateTime _editDate = DateTime.now();
+  List<CalendarEventModel> _editEvents = [];
 
   @override
   void initState() {
@@ -136,8 +100,10 @@ class _CalendarState extends State<Calendar> {
     }
     _selectedEvents = _getEventsForDay(selectedDay);
 
-    widget._editDate = selectedDay;
-    widget._editEvents = _selectedEvents;
+    setState(() {
+      _editDate = selectedDay;
+      _editEvents = _selectedEvents;
+    });
   }
 
   void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
@@ -161,119 +127,134 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CalendarEventListModel>(
-      builder: (context, calendarListModel, child) {
-        // Init vars
-        setKEvents(calendarListModel.kEvents);
-        _selectedDay = _focusedDay;
-        _selectedEvents = _getEventsForDay(_selectedDay!);
-        return Column(
-          children: [
-            TableCalendar<CalendarEventModel>(
-              firstDay: kFirstDay,
-              lastDay: kLastDay,
-              focusedDay: _focusedDay,
-              selectedDayPredicate: (day) => compareDays(_selectedDay, day),
-              rangeStartDay: _rangeStart,
-              rangeEndDay: _rangeEnd,
-              calendarFormat: _calendarFormat,
-              rangeSelectionMode: _rangeSelectionMode,
-              eventLoader: _getEventsForDay,
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              calendarStyle: CalendarStyle(
-                // Use `CalendarStyle` to customize the UI
-                outsideDaysVisible: false,
-                selectedDecoration: BoxDecoration(
-                  color: Provider.of<ThemeProvider>(context)
+    return Scaffold(
+      body: Consumer<CalendarEventListModel>(
+        builder: (context, calendarListModel, child) {
+          // Init vars
+          setKEvents(calendarListModel.kEvents);
+          _selectedDay = _focusedDay;
+          _selectedEvents = _getEventsForDay(_selectedDay!);
+          return Column(
+            children: [
+              TableCalendar<CalendarEventModel>(
+                firstDay: kFirstDay,
+                lastDay: kLastDay,
+                focusedDay: _focusedDay,
+                selectedDayPredicate: (day) => compareDays(_selectedDay, day),
+                rangeStartDay: _rangeStart,
+                rangeEndDay: _rangeEnd,
+                calendarFormat: _calendarFormat,
+                rangeSelectionMode: _rangeSelectionMode,
+                eventLoader: _getEventsForDay,
+                startingDayOfWeek: StartingDayOfWeek.monday,
+                calendarStyle: CalendarStyle(
+                  // Use `CalendarStyle` to customize the UI
+                  outsideDaysVisible: false,
+                  selectedDecoration: BoxDecoration(
+                    color: Provider.of<ThemeProvider>(context)
+                        .themeData
+                        .colorScheme
+                        .tertiaryContainer,
+                    shape: BoxShape.circle,
+                  ),
+                  selectedTextStyle: TextStyle(
+                    color: Provider.of<ThemeProvider>(context)
+                        .themeData
+                        .colorScheme
+                        .onTertiaryContainer,
+                  ),
+                  todayDecoration: BoxDecoration(
+                    color: Provider.of<ThemeProvider>(context)
+                        .themeData
+                        .colorScheme
+                        .secondaryContainer,
+                    shape: BoxShape.circle,
+                  ),
+                  todayTextStyle: TextStyle(
+                    color: Provider.of<ThemeProvider>(context)
+                        .themeData
+                        .colorScheme
+                        .onSecondaryContainer,
+                  ),
+                  rangeStartDecoration: BoxDecoration(
+                    color: Provider.of<ThemeProvider>(context)
+                        .themeData
+                        .colorScheme
+                        .inversePrimary,
+                    shape: BoxShape.circle,
+                  ),
+                  rangeEndDecoration: BoxDecoration(
+                    color: Provider.of<ThemeProvider>(context)
+                        .themeData
+                        .colorScheme
+                        .inversePrimary,
+                    shape: BoxShape.circle,
+                  ),
+                  rangeHighlightColor: Provider.of<ThemeProvider>(context)
                       .themeData
                       .colorScheme
-                      .tertiaryContainer,
-                  shape: BoxShape.circle,
+                      .primaryContainer,
+                  markerDecoration: BoxDecoration(
+                    color: Provider.of<ThemeProvider>(context)
+                        .themeData
+                        .colorScheme
+                        .inverseSurface,
+                    shape: BoxShape.circle,
+                  ),
+                  markersMaxCount: 5,
                 ),
-                selectedTextStyle: TextStyle(
-                  color: Provider.of<ThemeProvider>(context)
-                      .themeData
-                      .colorScheme
-                      .onTertiaryContainer,
-                ),
-                todayDecoration: BoxDecoration(
-                  color: Provider.of<ThemeProvider>(context)
-                      .themeData
-                      .colorScheme
-                      .secondaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                todayTextStyle: TextStyle(
-                  color: Provider.of<ThemeProvider>(context)
-                      .themeData
-                      .colorScheme
-                      .onSecondaryContainer,
-                ),
-                rangeStartDecoration: BoxDecoration(
-                  color: Provider.of<ThemeProvider>(context)
-                      .themeData
-                      .colorScheme
-                      .inversePrimary,
-                  shape: BoxShape.circle,
-                ),
-                rangeEndDecoration: BoxDecoration(
-                  color: Provider.of<ThemeProvider>(context)
-                      .themeData
-                      .colorScheme
-                      .inversePrimary,
-                  shape: BoxShape.circle,
-                ),
-                rangeHighlightColor: Provider.of<ThemeProvider>(context)
-                    .themeData
-                    .colorScheme
-                    .primaryContainer,
-                markerDecoration: BoxDecoration(
-                  color: Provider.of<ThemeProvider>(context)
-                      .themeData
-                      .colorScheme
-                      .inverseSurface,
-                  shape: BoxShape.circle,
-                ),
-                markersMaxCount: 5,
-              ),
-              onDaySelected: _onDaySelected,
-              onRangeSelected: _onRangeSelected,
-              onFormatChanged: (format) {
-                if (_calendarFormat != format) {
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                }
-              },
-              onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
-              },
-            ),
-            const SizedBox(height: 8.0),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _selectedEvents.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 12.0,
-                      vertical: 4.0,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: ListTile(
-                      onTap: () {},
-                      title: Text(_selectedEvents[index].routineSerie.name),
-                    ),
-                  );
+                onDaySelected: _onDaySelected,
+                onRangeSelected: _onRangeSelected,
+                onFormatChanged: (format) {
+                  if (_calendarFormat != format) {
+                    setState(() {
+                      _calendarFormat = format;
+                    });
+                  }
+                },
+                onPageChanged: (focusedDay) {
+                  _focusedDay = focusedDay;
                 },
               ),
+              const SizedBox(height: 8.0),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _selectedEvents.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 12.0,
+                        vertical: 4.0,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: ListTile(
+                        onTap: () {},
+                        title: Text(_selectedEvents[index].routineSerie.name),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.edit_calendar_rounded),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => EditCalendarEvent(
+                editDate: _editDate,
+                editEvents: _editEvents,
+              ),
             ),
-          ],
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

@@ -7,36 +7,13 @@ import 'package:workout_tracker/screens/edit_routine.dart';
 import 'package:workout_tracker/widgets/routines_floating_action_button.dart';
 
 import '../theme/theme_provider.dart';
+import '../widgets/bottom_navbar.dart';
 
-class Routines extends StatefulWidget implements ScreenModel {
-  Routines({super.key, required this.context});
+class Routines extends StatefulWidget {
+  const Routines({super.key});
 
   @override
   State<Routines> createState() => _RoutinesState();
-
-  @override
-  final BuildContext context;
-
-  @override
-  late final AppBar appBar = AppBar();
-
-  @override
-  final Widget floatingActionButton = const RoutinesFloatingActionButton();
-
-  @override
-  set context(BuildContext context) {
-    this.context = context;
-  }
-
-  @override
-  set floatingActionButton(Widget floatingActionButton) {
-    this.floatingActionButton = floatingActionButton;
-  }
-
-  @override
-  set appBar(AppBar appBar) {
-    this.appBar = appBar;
-  }
 }
 
 class _RoutinesState extends State<Routines> {
@@ -68,89 +45,94 @@ class _RoutinesState extends State<Routines> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RoutineListModel>(
-      builder: (context, routineListModel, child) {
-        return routineListModel.routines.isNotEmpty
-            ? ListView.builder(
-                itemCount:
-                    routineListModel.routines.length, // length of listData
-                itemBuilder: (context, idx) {
-                  final data =
-                      routineListModel.routines[idx]; // shorter variable name
-                  return ListTile(
-                    minTileHeight: 70,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    selected: _selected.contains(data),
-                    onTap: () {
-                      // Open modify_exercise screen for selected exercise
-                      Navigator.of(context)
-                          .push(
-                            MaterialPageRoute(
-                              builder: (_) => EditRoutine(
-                                routine: RoutineModel(
-                                  data.id,
-                                  data.name,
-                                  data.hexIconColor,
-                                  data.routineExercises,
+    return Scaffold(
+      appBar: AppBar(),
+      body: Consumer<RoutineListModel>(
+        builder: (context, routineListModel, child) {
+          return routineListModel.routines.isNotEmpty
+              ? ListView.builder(
+                  itemCount:
+                      routineListModel.routines.length, // length of listData
+                  itemBuilder: (context, idx) {
+                    final data =
+                        routineListModel.routines[idx]; // shorter variable name
+                    return ListTile(
+                      minTileHeight: 70,
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      selected: _selected.contains(data),
+                      onTap: () {
+                        // Open modify_exercise screen for selected exercise
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute(
+                                builder: (_) => EditRoutine(
+                                  routine: RoutineModel(
+                                    data.id,
+                                    data.name,
+                                    data.hexIconColor,
+                                    data.routineExercises,
+                                  ),
                                 ),
                               ),
+                            )
+                            .then((value) {});
+                      },
+                      enabled: _selectionEnabled,
+                      leading: _selected.contains(data)
+                          ? CircleAvatar(
+                              radius: 24,
+                              backgroundColor: data.hexIconColor != null
+                                  ? Color(data.hexIconColor!)
+                                  : Provider.of<ThemeProvider>(context)
+                                      .themeData
+                                      .colorScheme
+                                      .secondaryContainer,
+                              child: IconButton(
+                                iconSize: 30,
+                                icon: const Icon(Icons.done_rounded),
+                                onPressed: () {
+                                  toggleItemSelection(data);
+                                },
+                              ),
+                            )
+                          : CircleAvatar(
+                              radius: 24,
+                              backgroundColor: data.hexIconColor != null
+                                  ? Color(data.hexIconColor!)
+                                  : Provider.of<ThemeProvider>(context)
+                                      .themeData
+                                      .colorScheme
+                                      .primaryContainer,
+                              child: IconButton(
+                                iconSize: 30,
+                                icon: const Icon(Icons.assignment_outlined),
+                                onPressed: () {
+                                  toggleItemSelection(data);
+                                },
+                              ),
                             ),
-                          )
-                          .then((value) {});
-                    },
-                    enabled: _selectionEnabled,
-                    leading: _selected.contains(data)
-                        ? CircleAvatar(
-                            radius: 23,
-                            backgroundColor: data.hexIconColor != null
-                                ? Color(data.hexIconColor!)
-                                : Provider.of<ThemeProvider>(context)
-                                    .themeData
-                                    .colorScheme
-                                    .secondaryContainer,
-                            child: IconButton(
-                              iconSize: 30,
-                              icon: const Icon(Icons.done_rounded),
-                              onPressed: () {
-                                toggleItemSelection(data);
-                              },
-                            ),
-                          )
-                        : CircleAvatar(
-                            radius: 23,
-                            backgroundColor: data.hexIconColor != null
-                                ? Color(data.hexIconColor!)
-                                : Provider.of<ThemeProvider>(context)
-                                    .themeData
-                                    .colorScheme
-                                    .primaryContainer,
-                            child: IconButton(
-                              iconSize: 30,
-                              icon: const Icon(Icons.assignment_outlined),
-                              onPressed: () {
-                                toggleItemSelection(data);
-                              },
-                            ),
-                          ),
-                    title: Text(
-                      data.name ?? "",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                      title: Text(
+                        data.name ?? "",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    dense: true,
-                  );
-                },
-              )
-            : const Center(
-                child: Text("No routine found"),
-              );
-      },
+                      dense: true,
+                    );
+                  },
+                )
+              : const Center(
+                  child: Text("No routine found"),
+                );
+        },
+      ),
+      floatingActionButton: const RoutinesFloatingActionButton(),
     );
   }
 }

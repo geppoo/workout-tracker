@@ -56,16 +56,14 @@ class WorkoutTracker extends StatelessWidget {
     return MaterialApp(
       title: 'Workout Tracker',
       theme: Provider.of<ThemeProvider>(context).themeData,
-      home: const HomePage(title: 'Workout Tracker'),
+      home: const HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -78,41 +76,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> navbarScreens = <Widget>[
-      Routines(
-        context: context,
-      ),
-      Exercises(
-        context: context,
-      ),
-      Calendar(
-        context: context,
-      ),
-      Body(
-        context: context,
-      ),
-      Other(
-        context: context,
-      ),
+      const Routines(),
+      const Exercises(),
+      const Calendar(),
+      const Body(),
+      const Other(),
     ];
 
     return Scaffold(
-      appBar: /*AppBar(
-        title: const Text("Workout Tracker"),
-        actions: [
-          Switch(
-            value: Provider.of<ThemeProvider>(context).themeData ==
-                CustomThemes().lightMode,
-            onChanged: (value) {
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-            },
-          ),
-        ],
-      )*/
-          ((navbarScreens.elementAt(_selectedIndex)) as ScreenModel).appBar,
       body: navbarScreens.elementAt(_selectedIndex),
-      floatingActionButton:
-          ((navbarScreens.elementAt(_selectedIndex)) as ScreenModel)
-              .floatingActionButton,
       bottomNavigationBar: BottomNavbar(
         callback: (int val) {
           setState(() {
