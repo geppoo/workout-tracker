@@ -6,14 +6,12 @@ import 'package:workout_tracker/screens/exercises.dart';
 import 'package:workout_tracker/screens/other.dart';
 import 'package:workout_tracker/screens/routines.dart';
 import 'package:workout_tracker/theme/theme_provider.dart';
-import 'package:workout_tracker/theme/themes.dart';
 import 'package:workout_tracker/widgets/bottom_navbar.dart';
 
 import 'models/body_list_model.dart';
 import 'models/calendar_event_list_model.dart';
 import 'models/exercise_list_model.dart';
 import 'models/routine_list_model.dart';
-import 'models/screen_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

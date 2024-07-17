@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_tracker/models/routine_list_model.dart';
 import 'package:workout_tracker/models/routine_model.dart';
-import 'package:workout_tracker/models/screen_model.dart';
 import 'package:workout_tracker/screens/edit_routine.dart';
 import 'package:workout_tracker/widgets/routines_floating_action_button.dart';
 

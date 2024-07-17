@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:workout_tracker/models/screen_model.dart';
 
 import '../widgets/bottom_navbar.dart';
 
