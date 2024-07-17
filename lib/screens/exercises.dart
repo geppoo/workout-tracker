@@ -18,6 +18,9 @@ class Exercises extends StatefulWidget implements ScreenModel {
   final BuildContext context;
 
   @override
+  late final AppBar appBar = AppBar();
+
+  @override
   late final Widget floatingActionButton = FloatingActionButton(
     child: const Icon(Icons.add),
     onPressed: () {
@@ -50,6 +53,11 @@ class Exercises extends StatefulWidget implements ScreenModel {
   @override
   set floatingActionButton(Widget floatingActionButton) {
     this.floatingActionButton = floatingActionButton;
+  }
+
+  @override
+  set appBar(AppBar appBar) {
+    this.appBar = appBar;
   }
 }
 

@@ -11,6 +11,9 @@ class Other extends StatefulWidget implements ScreenModel {
   final BuildContext context;
 
   @override
+  late final AppBar appBar = AppBar();
+
+  @override
   late final Widget floatingActionButton = Visibility(
     visible: false,
     child: FloatingActionButton(
@@ -58,9 +61,13 @@ class Other extends StatefulWidget implements ScreenModel {
     );
   }
 
+  @override
+  set appBar(AppBar appBar) {
+    this.appBar = appBar;
+  }
 }
 
-class _OtherState extends State<Other>{
+class _OtherState extends State<Other> {
   @override
   Widget build(BuildContext context) {
     return const Center(
@@ -73,5 +80,4 @@ class _OtherState extends State<Other>{
       ),
     );
   }
-
 }

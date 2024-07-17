@@ -20,6 +20,9 @@ class Calendar extends StatefulWidget implements ScreenModel {
   @override
   final BuildContext context;
 
+  @override
+  late final AppBar appBar = AppBar();
+
   late DateTime _editDate = DateTime.now();
   late List<CalendarEventModel> _editEvents = [];
 
@@ -46,6 +49,11 @@ class Calendar extends StatefulWidget implements ScreenModel {
   @override
   set floatingActionButton(Widget floatingActionButton) {
     this.floatingActionButton = floatingActionButton;
+  }
+
+  @override
+  set appBar(AppBar appBar) {
+    this.appBar = appBar;
   }
 }
 

@@ -9,13 +9,16 @@ import 'package:workout_tracker/widgets/routines_floating_action_button.dart';
 import '../theme/theme_provider.dart';
 
 class Routines extends StatefulWidget implements ScreenModel {
-  const Routines({super.key, required this.context});
+  Routines({super.key, required this.context});
 
   @override
   State<Routines> createState() => _RoutinesState();
 
   @override
   final BuildContext context;
+
+  @override
+  late final AppBar appBar = AppBar();
 
   @override
   final Widget floatingActionButton = const RoutinesFloatingActionButton();
@@ -28,6 +31,11 @@ class Routines extends StatefulWidget implements ScreenModel {
   @override
   set floatingActionButton(Widget floatingActionButton) {
     this.floatingActionButton = floatingActionButton;
+  }
+
+  @override
+  set appBar(AppBar appBar) {
+    this.appBar = appBar;
   }
 }
 

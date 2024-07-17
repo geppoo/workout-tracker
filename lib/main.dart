@@ -9,6 +9,7 @@ import 'package:workout_tracker/theme/theme_provider.dart';
 import 'package:workout_tracker/theme/themes.dart';
 import 'package:workout_tracker/widgets/bottom_navbar.dart';
 
+import 'models/body_list_model.dart';
 import 'models/calendar_event_list_model.dart';
 import 'models/exercise_list_model.dart';
 import 'models/routine_list_model.dart';
@@ -21,6 +22,7 @@ Future<void> main() async {
   await RoutineListModel().init();
   await ExerciseListModel().init();
   await CalendarEventListModel().init();
+  await BodyListModel().init();
 
   runApp(
     MultiProvider(
@@ -36,6 +38,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => CalendarEventListModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => BodyListModel(),
         ),
       ],
       child: const WorkoutTracker(),
@@ -91,7 +96,7 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: /*AppBar(
         title: const Text("Workout Tracker"),
         actions: [
           Switch(
@@ -102,7 +107,8 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
-      ),
+      )*/
+          ((navbarScreens.elementAt(_selectedIndex)) as ScreenModel).appBar,
       body: navbarScreens.elementAt(_selectedIndex),
       floatingActionButton:
           ((navbarScreens.elementAt(_selectedIndex)) as ScreenModel)
