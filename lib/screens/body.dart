@@ -7,7 +7,6 @@ import 'package:workout_tracker/models/body_list_model.dart';
 
 import '../models/body_model.dart';
 import '../theme/theme_provider.dart';
-import '../widgets/bottom_navbar.dart';
 
 class Body extends StatefulWidget {
   const Body({super.key});
@@ -35,14 +34,9 @@ class _BodyState extends State<Body> {
       ),
       body: Consumer<BodyListModel>(
         builder: (context, bodyListModel, child) {
-          BodyModel todayBody = bodyListModel.bodyTrack.firstWhere(
-            (bodyTrack) =>
-                formatter.format(bodyTrack.day) ==
-                formatter.format(DateTime.now()),
-            orElse: () => bodyListModel.bodyTrack.isNotEmpty
-                ? bodyListModel.bodyTrack.last
-                : BodyModel(1, DateTime.now(), 0, 0, 0, 0, 0, 0),
-          );
+          BodyModel lastBodyTrack = bodyListModel.bodyTrack.isNotEmpty
+              ? bodyListModel.bodyTrack.last
+              : BodyModel(1, DateTime.now(), 0, 0, 0, 0, 0, 0);
           return SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -60,66 +54,80 @@ class _BodyState extends State<Body> {
                         .secondaryContainer,
                     child: Padding(
                       padding: const EdgeInsets.all(10),
-                      child: Row(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Text(
-                                    "Weight ${todayBody.weight.toString().replaceAll(regex, "")} (kg)",
-                                    style: cardTextStyle,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Text(
-                                    "Height ${todayBody.height.toString().replaceAll(regex, "")} (cm)",
-                                    style: cardTextStyle,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Text(
-                                    "Water ${todayBody.water.toString().replaceAll(regex, "")}%",
-                                    style: cardTextStyle,
-                                  ),
-                                ),
-                              ],
+                          Center(
+                            child: Text(
+                              "Last Update (${bodyListModel.bodyTrack.isEmpty ? "Never" : formatter.format(lastBodyTrack.day)})",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Text(
-                                    "Fat Mass ${todayBody.fatMass.toString().replaceAll(regex, "")}%",
-                                    style: cardTextStyle,
-                                  ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(
+                                        "Weight ${lastBodyTrack.weight.toString().replaceAll(regex, "")} (kg)",
+                                        style: cardTextStyle,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(
+                                        "Height ${lastBodyTrack.height.toString().replaceAll(regex, "")} (cm)",
+                                        style: cardTextStyle,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(
+                                        "Water ${lastBodyTrack.water.toString().replaceAll(regex, "")}%",
+                                        style: cardTextStyle,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Text(
-                                    "Lean Mass ${todayBody.leanMass.toString().replaceAll(regex, "")}%",
-                                    style: cardTextStyle,
-                                  ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(
+                                        "Fat Mass ${lastBodyTrack.fatMass.toString().replaceAll(regex, "")}%",
+                                        style: cardTextStyle,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(
+                                        "Lean Mass ${lastBodyTrack.leanMass.toString().replaceAll(regex, "")}%",
+                                        style: cardTextStyle,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(
+                                        "Muscle Mass ${lastBodyTrack.muscleMass.toString().replaceAll(regex, "")}%",
+                                        style: cardTextStyle,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Text(
-                                    "Muscle Mass ${todayBody.muscleMass.toString().replaceAll(regex, "")}%",
-                                    style: cardTextStyle,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

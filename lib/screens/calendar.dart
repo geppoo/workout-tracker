@@ -8,7 +8,6 @@ import 'package:table_calendar/table_calendar.dart';
 import '../models/calendar_event_list_model.dart';
 import '../models/calendar_event_model.dart';
 import '../theme/theme_provider.dart';
-import '../widgets/bottom_navbar.dart';
 import 'edit_calendar_event.dart';
 
 class Calendar extends StatefulWidget {
@@ -115,7 +114,6 @@ class _CalendarState extends State<Calendar> {
       _rangeSelectionMode = RangeSelectionMode.toggledOn;
     });
 
-    // `start` or `end` could be null
     if (start != null && end != null) {
       _selectedEvents = _getEventsForRange(start, end);
     } else if (start != null) {

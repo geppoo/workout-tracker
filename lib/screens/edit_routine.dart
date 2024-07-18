@@ -613,7 +613,7 @@ class _EditRoutineState extends State<EditRoutine>
                                 iconSize: 30,
                                 icon: const Icon(Icons.done_rounded),
                                 onPressed: () {
-                                  toggleItemSelection(data);
+                                  toggleItemSelection(data.exercise);
                                 },
                               ),
                             )
@@ -623,7 +623,7 @@ class _EditRoutineState extends State<EditRoutine>
                                 iconSize: 30,
                                 icon: const Icon(Icons.assignment_outlined),
                                 onPressed: () {
-                                  toggleItemSelection(data);
+                                  toggleItemSelection(data.exercise);
                                 },
                               ),
                             ),
