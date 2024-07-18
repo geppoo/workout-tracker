@@ -157,8 +157,11 @@ class _ExercisesState extends State<Exercises> {
       builder: (context, exerciseListModel, child) {
         return Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             title: !_searchBoolean
-                ? const Text("Exercises")
+                ? const Text(
+                    "Exercises",
+                  )
                 : _searchTextField(exerciseListModel.exercises),
             actions: !_searchBoolean
                 ? [

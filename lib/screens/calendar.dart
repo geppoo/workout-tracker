@@ -128,6 +128,12 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
+          "Calendar",
+        ),
+      ),
       body: Consumer<CalendarEventListModel>(
         builder: (context, calendarListModel, child) {
           // Init vars

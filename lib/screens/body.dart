@@ -27,6 +27,12 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
+          "Body",
+        ),
+      ),
       body: Consumer<BodyListModel>(
         builder: (context, bodyListModel, child) {
           BodyModel todayBody = bodyListModel.bodyTrack.firstWhere(

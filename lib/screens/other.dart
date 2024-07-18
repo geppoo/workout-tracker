@@ -39,14 +39,11 @@ class Other extends StatefulWidget {
 class _OtherState extends State<Other> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text(
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
           "Other",
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-          ),
         ),
       ),
     );
