@@ -176,7 +176,22 @@ class _RoutinesState extends State<Routines> {
                             _searchBoolean = true;
                             _searchIndexList = [];
                           });
-                        })
+                        }),
+                    Offstage(
+                      offstage: _selected.isEmpty,
+                      child: IconButton(
+                        onPressed: () {
+                          for (RoutineModel routine in _selected) {
+                            RoutineListModel().remove(routine);
+                          }
+                          setState(() {
+                            _selected.clear();
+                            _selectionEnabled = true;
+                          });
+                        },
+                        icon: const Icon(Icons.delete_forever_rounded),
+                      ),
+                    ),
                   ]
                 : [
                     IconButton(

@@ -53,6 +53,15 @@ class RoutineListModel extends ChangeNotifier {
     });
   }
 
+  Future<void> remove(RoutineModel routine) async {
+    _routines.remove(routine);
+    await FileService.routines()
+        .writeFile(jsonEncode(_routines))
+        .then((success) {
+      notifyListeners();
+    });
+  }
+
   Future<void> removeAt(int index) async {
     _routines.removeAt(index);
     await FileService.routines()

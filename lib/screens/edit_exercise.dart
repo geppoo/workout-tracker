@@ -182,6 +182,32 @@ class _EditExerciseState extends State<EditExercise> {
                       //Non esiste, quindo salvo l'esercizio
                       exerciseListModel.add(widget.exercise);
                     }
+                    var snackBar = SnackBar(
+                      content: Text(
+                        'Information saved!',
+                        style: TextStyle(
+                          color:
+                              Provider.of<ThemeProvider>(context, listen: false)
+                                  .themeData
+                                  .colorScheme
+                                  .onSecondaryContainer,
+                        ),
+                      ),
+                      showCloseIcon: true,
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor:
+                          Provider.of<ThemeProvider>(context, listen: false)
+                              .themeData
+                              .colorScheme
+                              .secondaryContainer,
+                      closeIconColor:
+                          Provider.of<ThemeProvider>(context, listen: false)
+                              .themeData
+                              .colorScheme
+                              .onSecondaryContainer,
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
                   icon: const Icon(Icons.save_rounded),
                 ),

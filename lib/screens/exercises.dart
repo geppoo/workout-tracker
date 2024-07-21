@@ -172,7 +172,22 @@ class _ExercisesState extends State<Exercises> {
                             _searchBoolean = true;
                             _searchIndexList = [];
                           });
-                        })
+                        }),
+              Offstage(
+                offstage: _selected.isEmpty,
+                child: IconButton(
+                  onPressed: () {
+                    for (ExerciseModel routine in _selected) {
+                      ExerciseListModel().remove(routine);
+                    }
+                    setState(() {
+                      _selected.clear();
+                      _selectionEnabled = true;
+                    });
+                  },
+                  icon: const Icon(Icons.delete_forever_rounded),
+                ),
+              ),
                   ]
                 : [
                     IconButton(

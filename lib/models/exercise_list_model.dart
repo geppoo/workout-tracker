@@ -53,6 +53,15 @@ class ExerciseListModel extends ChangeNotifier {
     });
   }
 
+  Future<void> remove(ExerciseModel exercise) async {
+    _exercises.remove(exercise);
+    await FileService.exercises()
+        .writeFile(jsonEncode(_exercises))
+        .then((success) {
+      notifyListeners();
+    });
+  }
+
   Future<void> removeAt(int index) async {
     _exercises.removeAt(index);
     await FileService.exercises()
