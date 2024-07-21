@@ -11,6 +11,7 @@ class FileService {
   factory FileService.routines() => FileService("routines.json");
   factory FileService.calendar() => FileService("calendar.json");
   factory FileService.body() => FileService("body.json");
+  factory FileService.settings() => FileService("settings.json");
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();

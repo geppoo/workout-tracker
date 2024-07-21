@@ -46,6 +46,8 @@ dependencies:
   collection: any
   intl: ^0.19.0
   settings_ui: ^2.0.2
+  url_launcher: ^6.3.0
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +64,13 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  remove_alpha_ios: true
 
 # The following section is specific to Flutter packages.
 flutter:

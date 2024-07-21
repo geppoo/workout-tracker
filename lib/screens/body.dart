@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
@@ -16,12 +17,52 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  TextEditingController weightController = TextEditingController();
+  late BodyModel lastBodyTrack;
+  late TextEditingController weightController;
+  late TextEditingController heightController;
+  late TextEditingController fatMassController;
+  late TextEditingController leanMassController;
+  late TextEditingController muscleMassController;
+  late TextEditingController waterController;
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
   RegExp regex = RegExp(r'([.]*0)(?!.*\d)');
-  TextStyle cardTextStyle = const TextStyle(
-    fontWeight: FontWeight.bold,
-  );
+  late TextStyle cardTextStyle;
+
+  @override
+  void initState() {
+    super.initState();
+    cardTextStyle = TextStyle(
+      color: Provider.of<ThemeProvider>(context, listen: false)
+          .themeData
+          .colorScheme
+          .onTertiaryContainer,
+      fontWeight: FontWeight.bold,
+    );
+
+    UnmodifiableListView<BodyModel> bodyListTrack =
+        Provider.of<BodyListModel>(context, listen: false).bodyTrack;
+    lastBodyTrack = bodyListTrack.isNotEmpty
+        ? bodyListTrack.last
+        : BodyModel(1, DateTime.now(), 0, 0, 0, 0, 0, 0);
+    weightController = TextEditingController(
+      text: lastBodyTrack.weight.toString().replaceAll(regex, ""),
+    );
+    heightController = TextEditingController(
+      text: lastBodyTrack.height.toString().replaceAll(regex, ""),
+    );
+    fatMassController = TextEditingController(
+      text: lastBodyTrack.fatMass.toString().replaceAll(regex, ""),
+    );
+    leanMassController = TextEditingController(
+      text: lastBodyTrack.leanMass.toString().replaceAll(regex, ""),
+    );
+    muscleMassController = TextEditingController(
+      text: lastBodyTrack.muscleMass.toString().replaceAll(regex, ""),
+    );
+    waterController = TextEditingController(
+      text: lastBodyTrack.water.toString().replaceAll(regex, ""),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +75,7 @@ class _BodyState extends State<Body> {
       ),
       body: Consumer<BodyListModel>(
         builder: (context, bodyListModel, child) {
-          BodyModel lastBodyTrack = bodyListModel.bodyTrack.isNotEmpty
+          lastBodyTrack = bodyListModel.bodyTrack.isNotEmpty
               ? bodyListModel.bodyTrack.last
               : BodyModel(1, DateTime.now(), 0, 0, 0, 0, 0, 0);
           return SafeArea(
@@ -51,7 +92,7 @@ class _BodyState extends State<Body> {
                     color: Provider.of<ThemeProvider>(context)
                         .themeData
                         .colorScheme
-                        .secondaryContainer,
+                        .tertiary,
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Column(
@@ -60,7 +101,11 @@ class _BodyState extends State<Body> {
                           Center(
                             child: Text(
                               "Last Update (${bodyListModel.bodyTrack.isEmpty ? "Never" : formatter.format(lastBodyTrack.day)})",
-                              style: const TextStyle(
+                              style: TextStyle(
+                                color: Provider.of<ThemeProvider>(context)
+                                    .themeData
+                                    .colorScheme
+                                    .onTertiaryContainer,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
@@ -142,6 +187,7 @@ class _BodyState extends State<Body> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: TextField(
+                            controller: weightController,
                             keyboardType: TextInputType.number,
                             onSubmitted: (value) {
                               developer.log(value);
@@ -158,6 +204,7 @@ class _BodyState extends State<Body> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: TextField(
+                            controller: heightController,
                             keyboardType: TextInputType.number,
                             onSubmitted: (value) {
                               developer.log(value);
@@ -174,6 +221,7 @@ class _BodyState extends State<Body> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: TextField(
+                            controller: fatMassController,
                             keyboardType: TextInputType.number,
                             onSubmitted: (value) {
                               developer.log(value);
@@ -190,6 +238,7 @@ class _BodyState extends State<Body> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: TextField(
+                            controller: leanMassController,
                             keyboardType: TextInputType.number,
                             onSubmitted: (value) {
                               developer.log(value);
@@ -206,6 +255,7 @@ class _BodyState extends State<Body> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: TextField(
+                            controller: muscleMassController,
                             keyboardType: TextInputType.number,
                             onSubmitted: (value) {
                               developer.log(value);
@@ -222,6 +272,7 @@ class _BodyState extends State<Body> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: TextField(
+                            controller: waterController,
                             keyboardType: TextInputType.number,
                             onSubmitted: (value) {
                               developer.log(value);
@@ -246,7 +297,50 @@ class _BodyState extends State<Body> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.today_rounded),
-        onPressed: () {},
+        onPressed: () {
+          if (weightController.text.isEmpty ||
+              heightController.text.isEmpty ||
+              fatMassController.text.isEmpty ||
+              leanMassController.text.isEmpty ||
+              muscleMassController.text.isEmpty ||
+              waterController.text.isEmpty) {}
+          BodyListModel().add(
+            BodyModel(
+              UniqueKey().hashCode,
+              DateTime.now(),
+              double.parse(weightController.text),
+              double.parse(heightController.text),
+              double.parse(fatMassController.text),
+              double.parse(leanMassController.text),
+              double.parse(muscleMassController.text),
+              double.parse(waterController.text),
+            ),
+          );
+
+          var snackBar = SnackBar(
+            content: Text(
+              'Information saved!',
+              style: TextStyle(
+                color: Provider.of<ThemeProvider>(context, listen: false)
+                    .themeData
+                    .colorScheme
+                    .onSecondaryContainer,
+              ),
+            ),
+            showCloseIcon: true,
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Provider.of<ThemeProvider>(context, listen: false)
+                .themeData
+                .colorScheme
+                .secondaryContainer,
+            closeIconColor: Provider.of<ThemeProvider>(context, listen: false)
+                .themeData
+                .colorScheme
+                .onSecondaryContainer,
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        },
       ),
     );
   }

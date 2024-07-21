@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../models/routine_list_model.dart';
 import '../models/routine_model.dart';
+import '../theme/theme_provider.dart';
 
 class RoutinesFloatingActionButton extends StatefulWidget {
   const RoutinesFloatingActionButton({super.key});
@@ -25,7 +26,10 @@ class _RoutinesFloatingActionButtonState
   @override
   void initState() {
     super.initState();
-    _selectedRoutineColor = Colors.orange;
+    _selectedRoutineColor = Provider.of<ThemeProvider>(context, listen: false)
+        .themeData
+        .colorScheme
+        .tertiary;
   }
 
   @override

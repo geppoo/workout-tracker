@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_tracker/screens/body.dart';
@@ -6,12 +8,15 @@ import 'package:workout_tracker/screens/exercises.dart';
 import 'package:workout_tracker/screens/other.dart';
 import 'package:workout_tracker/screens/routines.dart';
 import 'package:workout_tracker/theme/theme_provider.dart';
+import 'package:workout_tracker/theme/themes.dart';
 import 'package:workout_tracker/widgets/bottom_navbar.dart';
 
 import 'models/body_list_model.dart';
 import 'models/calendar_event_list_model.dart';
 import 'models/exercise_list_model.dart';
 import 'models/routine_list_model.dart';
+import 'models/setting_list_model.dart';
+import 'models/setting_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +26,7 @@ Future<void> main() async {
   await ExerciseListModel().init();
   await CalendarEventListModel().init();
   await BodyListModel().init();
+  await SettingListModel().init();
 
   runApp(
     MultiProvider(
@@ -40,6 +46,9 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (context) => BodyListModel(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => SettingListModel(),
+        ),
       ],
       child: const WorkoutTracker(),
     ),
@@ -51,11 +60,24 @@ class WorkoutTracker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Workout Tracker',
-      theme: Provider.of<ThemeProvider>(context).themeData,
-      home: const HomePage(),
-      debugShowCheckedModeBanner: false,
+    return Consumer<SettingListModel>(
+      builder: (context, settingListModel, child) {
+        String theme = settingListModel.settings
+            .firstWhere((setting) => setting.name == "theme", orElse: () {
+          SettingListModel().add(SettingModel("theme", "lightMode"));
+          return SettingModel("theme", "lightMode");
+        }).value;
+
+        return MaterialApp(
+          title: 'Workout Tracker',
+          //theme: Provider.of<ThemeProvider>(context).themeData,
+          theme: theme == "lightMode"
+              ? CustomThemes().lightMode
+              : CustomThemes().darkMode,
+          home: const HomePage(),
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
